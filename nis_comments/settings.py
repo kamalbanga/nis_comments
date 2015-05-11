@@ -101,7 +101,6 @@ else:
     'PORT': '3306',
     }
     }
-    }
 
 
 # Internationalization
