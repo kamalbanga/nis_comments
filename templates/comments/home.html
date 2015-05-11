@@ -1,0 +1,9 @@
+{% extends "base.html" %}
+
+{% block content %}
+<ul>
+    {% for n in news %}
+    <li> <a href="/{{n.news_id}}">{{n.news_id}}</a> </li>
+    {% endfor %}
+</ul>
+{% endblock content %}
