@@ -1,6 +1,7 @@
 {% extends "base.html" %}
 
 {% block content %}
+Following are the news articles:
 <ul>
     {% for n in news %}
     <li> <a href="/{{n.news_id}}">{{n.news_id}}</a> </li>
