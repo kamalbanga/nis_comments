@@ -3,23 +3,27 @@ from comments.models import User
 from django.http import HttpResponseRedirect, HttpResponse
 from django.template import RequestContext, loader, Context
 from comments.models import News, User, Comment
-from django.core.urlresolvers import resolve 
+from django.core.urlresolvers import resolve
+from django.contrib import auth
 import uuid
 
 def home(request):
-    n = News.objects.all()
-    c = Context({'news': n})
-    t = loader.get_template('home.html')
-    return HttpResponse(t.render(c))
+    return render(request, 'home.html', {'news': News.objects.all()})
+    # n = News.objects.all()
+    # c = Context({'news': n})
+    # t = loader.get_template('home.html')
+    # return HttpResponse(t.render(RequestContext(request, c)))
 
 def news(request, url_arg):
+    print "in views.news; cookies = ", request.COOKIES
     c = Comment.objects.all().filter(news__news_id=url_arg)
     n = News.objects.all().get(news_id=url_arg)
     cont = Context({'news': n.text, 'cts': c, 'news_id': n.news_id})
-    rc = RequestContext(request, cont)
-    t = loader.get_template('news.html')
-    return HttpResponse(t.render(rc))
-    return render(request, 'news.html', context_dict, context_instance=RequestContext(request))
+    return render(request, 'news.html', cont)
+    # rc = RequestContext(request, cont)
+    # t = loader.get_template('news.html')
+    # return HttpResponse(t.render(rc))
+    # return render(request, 'news.html', context_dict, context_instance=RequestContext(request))
 
 def submit(request, url_arg):
     user_id = request.POST.get('user_id')
@@ -55,3 +59,27 @@ def like_category(request):
             category.save()
 
     return HttpResponse(likes)
+
+def login(request):
+    return render(request, 'login.html', {})
+
+def login_view(request):
+    username = request.POST.get('username', '')
+    password = request.POST.get('password', '')
+    user = auth.authenticate(username=username, password=password)
+    if user is not None and user.is_active:
+        # Correct password, and the user is marked "active"
+        auth.login(request, user)
+        # Redirect to a success page.
+        return HttpResponseRedirect("/loggedin/")
+    else:
+        # Show an error page
+        return HttpResponseRedirect("/account/invalid/")
+
+def loggedin(request):
+    print "Is user authenticated?, bool = ", request.user.is_authenticated()
+    return HttpResponse("Thanks for signing in")
+
+def logout(request):
+    auth.logout(request)
+    return HttpResponse("You have successfully logged out")

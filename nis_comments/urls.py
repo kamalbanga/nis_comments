@@ -2,7 +2,10 @@ from django.conf.urls import include, url
 from django.contrib import admin
 
 urlpatterns = [
-    # Examples:
+    url(r'^accounts/login/$', 'comments.views.login'),
+    url(r'^login-view/$','comments.views.login_view'),
+    url(r'^loggedin/$','comments.views.loggedin'),
+    url(r'^accounts/logout/$', 'comments.views.logout'),
     url(r'^admin/', include(admin.site.urls)),
     url(r'^$', 'comments.views.home',name = 'home'),
     url(r'^like_category/$', 'comments.views.like_category', name='like_category'),
