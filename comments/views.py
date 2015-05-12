@@ -18,8 +18,8 @@ def news(request, url_arg):
     print "in views.news; cookies = ", request.COOKIES
     c = Comment.objects.all().filter(news__news_id=url_arg)
     n = News.objects.all().get(news_id=url_arg)
-    cont = Context({'news': n.text, 'cts': c, 'news_id': n.news_id})
-    return render(request, 'news.html', cont)
+    dict = {'news': n.text, 'cts': c, 'news_id': n.news_id}
+    return render(request, 'news.html', dict)
     # rc = RequestContext(request, cont)
     # t = loader.get_template('news.html')
     # return HttpResponse(t.render(rc))
@@ -35,7 +35,7 @@ def submit(request, url_arg):
     c = Comment(uuid=uuid.uuid4(),news=n, user=u, text=comment_text)
     print "c.uuid = ", c.uuid, " c.text = ", c.text
     c.save()
-    return HttpResponse("Thanks for your opinion!")
+    return HttpResponse("Thanks for your opinion! <a href='/%s'>Back</a>." % url_arg)
 
 def like_category(request):
     print "got a like"
@@ -78,8 +78,8 @@ def login_view(request):
 
 def loggedin(request):
     print "Is user authenticated?, bool = ", request.user.is_authenticated()
-    return HttpResponse("Thanks for signing in")
+    return HttpResponse("You have successfully signed in! <a href='/'>Home</a>.")
 
 def logout(request):
     auth.logout(request)
-    return HttpResponse("You have successfully logged out")
+    return HttpResponse('You have successfully logged out. <a href="/">Home</a>')
