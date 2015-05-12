@@ -1,13 +1,14 @@
 from django.db import models
 from django.forms import ModelForm
+from django.contrib.auth.models import User
 import uuid
 
-class User(models.Model):
-    name = models.CharField(max_length=100,null=True)
-    user_id = models.CharField(max_length=100,null=True)
+# class User(models.Model):
+#     name = models.CharField(max_length=100,null=True)
+#     user_id = models.CharField(max_length=100,null=True)
 
-    def __unicode__(self):
-        return self.user_id
+#     def __unicode__(self):
+#         return self.user_id
 
 class News(models.Model):
     news_id = models.CharField(max_length=1000,null=True)
@@ -20,7 +21,7 @@ class News(models.Model):
 class Comment(models.Model):
     uuid = models.CharField(max_length=40, default='random')
     news = models.ForeignKey('News')
-    user = models.OneToOneField('User', primary_key=True) # ForeignKey('User')
+    user = models.OneToOneField(User, primary_key=True) # ForeignKey('User')
     text = models.CharField(max_length=300, null=True)
     upvotes = models.PositiveIntegerField(default=0)
     downvotes = models.PositiveIntegerField(default=0)

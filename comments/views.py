@@ -5,6 +5,7 @@ from django.template import RequestContext, loader, Context
 from comments.models import News, User, Comment
 from django.core.urlresolvers import resolve
 from django.contrib import auth
+from django.contrib.auth.decorators import login_required
 import uuid
 
 def home(request):
@@ -25,18 +26,20 @@ def news(request, url_arg):
     # return HttpResponse(t.render(rc))
     # return render(request, 'news.html', context_dict, context_instance=RequestContext(request))
 
+@login_required
 def submit(request, url_arg):
     user_id = request.POST.get('user_id')
     comment_text = request.POST.get('comment')
     print "news_id =", url_arg, "user_id = ", user_id, "comment_text = ", comment_text
     n = News.objects.all().get(news_id=url_arg)
-    u = User(name='random',user_id=user_id)
-    u.save()
-    c = Comment(uuid=uuid.uuid4(),news=n, user=u, text=comment_text)
+    # u = User(name='random',user_id=user_id)
+    # u.save()
+    c = Comment(uuid=uuid.uuid4(),news=n, user=request.user, text=comment_text)
     print "c.uuid = ", c.uuid, " c.text = ", c.text
     c.save()
     return HttpResponse("Thanks for your opinion! <a href='/%s'>Back</a>." % url_arg)
 
+@login_required
 def like_category(request):
     print "got a like"
     context = RequestContext(request)

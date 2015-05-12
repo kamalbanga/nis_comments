@@ -17,7 +17,7 @@
 </form>
 
 {% for ct in cts %}
-{{ ct.text }} {{ct.uuid}} upvotes: {{ct.upvotes}}
+{{ ct.text }} by {{ct.user.username}}; {{ct.uuid}} upvotes: {{ct.upvotes}}
 <button id ="{{ct.uuid}}" class="upvote" data-catid="{{category.id}}" class="btn btn-mini btn-primary" type="button">Upvote</button>
 <br>
 {% endfor %}
