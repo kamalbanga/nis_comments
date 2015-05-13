@@ -2,7 +2,8 @@ from django.shortcuts import render
 from comments.models import User
 from django.http import HttpResponseRedirect, HttpResponse
 from django.template import RequestContext, loader, Context
-from comments.models import News, User, Comment
+from comments.models import News, Comment, Vote
+from django.contrib.auth.models import User
 from django.core.urlresolvers import resolve
 from django.contrib import auth
 from django.contrib.auth.decorators import login_required
@@ -40,27 +41,20 @@ def submit(request, url_arg):
     return HttpResponse("Thanks for your opinion! <a href='/%s'>Back</a>." % url_arg)
 
 @login_required
-def like_category(request):
-    print "got a like"
+def vote(request):
     context = RequestContext(request)
-    cat_id = None
     if request.method == 'GET':
-        cat_id = request.GET['category_id']
         id = request.GET['id']
-        c = Comment.objects.get(uuid=id)
-        print 'id in like = ', id, " & comment text = ", c.text, " upvotes = ", c.upvotes
-        Comment.objects.filter(uuid=id).update(upvotes=c.upvotes+1)
-        # Comment.objects.get(uuid=id).upvote_table.add(User.objects.)
-        print "upvotes = ", c.upvotes
-
-    likes = 0
-    if cat_id:
-        category = Category.objects.get(id=int(cat_id))
-        if category:
-            likes = category.likes + 1
-            category.likes = likes
-            category.save()
-
+        vote_type = request.GET['vote']
+        cmt = Comment.objects.get(uuid=id)
+        if cmt.votes.filter(username=request.user.username).exists():
+            print "This user has already upvoted"
+        else:
+            if vote_type == 1:
+                Comment.objects.filter(uuid=id).update(upvotes=cmt.upvotes+1)
+            else:
+                Comment.objects.filter(uuid=id).update(downvotes=cmt.downvotes+1)
+            Vote.objects.create(cmt=cmt, user=request.user, vote_type=vote_type)
     return HttpResponse(likes)
 
 def login(request):

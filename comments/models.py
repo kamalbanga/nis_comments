@@ -25,11 +25,17 @@ class Comment(models.Model):
     text = models.CharField(max_length=300, null=True)
     upvotes = models.PositiveIntegerField(default=0)
     downvotes = models.PositiveIntegerField(default=0)
-    upvote_table = models.ManyToManyField(User, related_name = 'upvote',)
-    downvote_table = models.ManyToManyField(User, related_name = 'downvote',)
+    votes = models.ManyToManyField(User, through='Vote', related_name='votes_table')
+    # upvote_table = models.ManyToManyField(User, related_name = 'upvote', through=Vote)
+    # downvote_table = models.ManyToManyField(User, related_name = 'downvote',)
 
     def __unicode__(self):
         return self.text
+
+class Vote(models.Model):
+    cmt = models.ForeignKey(Comment)
+    user = models.ForeignKey(User)
+    vote_type = models.SmallIntegerField(default=0) # vote_type is +1 for upvote & -1 for downvote
 
 class CommentForm(ModelForm):
     class Meta:
