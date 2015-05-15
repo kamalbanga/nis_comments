@@ -13,13 +13,11 @@ class News(models.Model):
 class Comment(models.Model):
     uuid = models.CharField(max_length=40, default='random')
     news = models.ForeignKey(News)
-    user = models.ForeignKey(User) # ForeignKey('User')
+    user = models.ForeignKey(User)
     text = models.CharField(max_length=300, null=True)
     upvotes = models.PositiveIntegerField(default=0)
     downvotes = models.PositiveIntegerField(default=0)
     votes = models.ManyToManyField(User, through='Vote', related_name='votes_table', default=None)
-    # upvote_table = models.ManyToManyField(User, related_name = 'upvote', through=Vote)
-    # downvote_table = models.ManyToManyField(User, related_name = 'downvote',)
 
     def __unicode__(self):
         return self.text
