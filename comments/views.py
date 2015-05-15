@@ -19,7 +19,6 @@ def news(request, url_arg):
 
 @login_required
 def submit(request, url_arg):
-    user_id = request.POST.get('user_id')
     comment_text = request.POST.get('comment')
     n = News.objects.all().get(news_id=url_arg)
     c = Comment(uuid=uuid.uuid4(),news=n, user=request.user, text=comment_text)

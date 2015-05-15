@@ -9,7 +9,6 @@
 <script src="{% static "vote-ajax.js" %}"></script>
 
 <form action="{% url 'submit' news_id %}" method="post"> {% csrf_token %}
-    User Id: <input type="text" name="user_id"> <br>
     Comment:<br>
     <input type="text" name="comment" placeholder="Express your opinion ...">
     <input type="submit" value="Submit"> <br>
