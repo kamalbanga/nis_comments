@@ -9,6 +9,7 @@ urlpatterns = [
     url(r'^admin/', include(admin.site.urls)),
     url(r'^$', 'comments.views.home',name = 'home'),
     url(r'^vote/$', 'comments.views.vote', name='vote'),
+    url(r'^delete/','comments.views.delete_comment', name='delete'),
     url(r'^((?:\w|-)+)/submit/$','comments.views.submit', name='submit'),
     url(r'^((?:\w|-)+)/$', 'comments.views.news', name='news_id'),
     # url(r'^blog/', include('blog.urls')),

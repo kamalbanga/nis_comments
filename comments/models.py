@@ -17,6 +17,7 @@ class Comment(models.Model):
     text = models.CharField(max_length=300, null=True)
     upvotes = models.PositiveIntegerField(default=0)
     downvotes = models.PositiveIntegerField(default=0)
+    isDeleted = models.BooleanField(default=False)
     votes = models.ManyToManyField(User, through='Vote', related_name='votes_table', default=None)
 
     def __unicode__(self):

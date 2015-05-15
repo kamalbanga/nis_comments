@@ -12,7 +12,7 @@ def home(request):
     return render(request, 'home.html', {'news': News.objects.all()})
 
 def news(request, url_arg):
-    c = Comment.objects.all().filter(news__news_id=url_arg)
+    c = Comment.objects.all().filter(news__news_id=url_arg, isDeleted=False)
     n = News.objects.all().get(news_id=url_arg)
     dict = {'news': n.text, 'cts': c, 'news_id': n.news_id}
     return render(request, 'news.html', dict)
@@ -41,6 +41,11 @@ def vote(request):
                 Comment.objects.filter(uuid=id).update(downvotes=cmt.downvotes+1)
             Vote.objects.create(cmt=cmt, user=request.user, vote_type=vote_type)
     return HttpResponse(str)
+
+def delete_comment(request):
+    comment_id = request.GET['uuid']
+    Comment.objects.filter(uuid=comment_id).update(isDeleted=True)
+    return HttpResponse("Your comment is successfully deleted")
 
 def login(request):
     return render(request, 'login.html', {})
