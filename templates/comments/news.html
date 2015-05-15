@@ -6,7 +6,6 @@
 <p>
     {{news}}<br>
 </p>
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
 <script src="{% static "vote-ajax.js" %}"></script>
 
 <form action="{% url 'submit' news_id %}" method="post"> {% csrf_token %}
