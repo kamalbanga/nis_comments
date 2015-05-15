@@ -20,7 +20,9 @@
 <button id ="{{ct.uuid}}" class="upvote" data-catid="{{category.id}}" class="btn btn-mini btn-primary" type="button">Upvote</button>
 Downvotes: {{ct.downvotes}}
 <button id ="{{ct.uuid}}" class="downvote" data-catid="{{category.id}}" class="btn btn-mini btn-primary" type="button">Downvote</button>
+{% ifequal ct.user request.user %}
 <button id="{{ct.uuid}}" class="delete_comment">Delete</button>
+{% endifequal %}
 <br>
 {% endfor %}
 {% endblock content %}

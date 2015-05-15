@@ -42,6 +42,7 @@ def vote(request):
             Vote.objects.create(cmt=cmt, user=request.user, vote_type=vote_type)
     return HttpResponse(str)
 
+@login_required
 def delete_comment(request):
     comment_id = request.GET['uuid']
     Comment.objects.filter(uuid=comment_id).update(isDeleted=True)
