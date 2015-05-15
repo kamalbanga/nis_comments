@@ -1,14 +1,6 @@
 from django.db import models
-from django.forms import ModelForm
 from django.contrib.auth.models import User
 import uuid
-
-# class User(models.Model):
-#     name = models.CharField(max_length=100,null=True)
-#     user_id = models.CharField(max_length=100,null=True)
-
-#     def __unicode__(self):
-#         return self.user_id
 
 class News(models.Model):
     news_id = models.CharField(max_length=1000,null=True)
@@ -20,12 +12,12 @@ class News(models.Model):
 
 class Comment(models.Model):
     uuid = models.CharField(max_length=40, default='random')
-    news = models.ForeignKey('News')
-    user = models.OneToOneField(User, primary_key=True) # ForeignKey('User')
+    news = models.ForeignKey(News)
+    user = models.ForeignKey(User) # ForeignKey('User')
     text = models.CharField(max_length=300, null=True)
     upvotes = models.PositiveIntegerField(default=0)
     downvotes = models.PositiveIntegerField(default=0)
-    votes = models.ManyToManyField(User, through='Vote', related_name='votes_table')
+    votes = models.ManyToManyField(User, through='Vote', related_name='votes_table', default=None)
     # upvote_table = models.ManyToManyField(User, related_name = 'upvote', through=Vote)
     # downvote_table = models.ManyToManyField(User, related_name = 'downvote',)
 
@@ -36,8 +28,3 @@ class Vote(models.Model):
     cmt = models.ForeignKey(Comment)
     user = models.ForeignKey(User)
     vote_type = models.SmallIntegerField(default=0) # vote_type is +1 for upvote & -1 for downvote
-
-class CommentForm(ModelForm):
-    class Meta:
-        model = Comment
-        fields = ['user', 'text']
