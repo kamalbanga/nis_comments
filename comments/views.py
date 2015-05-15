@@ -58,8 +58,8 @@ def login_view(request):
         # Show an error page
         return HttpResponseRedirect("/account/invalid/")
 
+@login_required
 def loggedin(request):
-    print "Is user authenticated?, bool = ", request.user.is_authenticated()
     return HttpResponse("You have successfully signed in! <a href='/'>Home</a>.")
 
 def logout(request):
