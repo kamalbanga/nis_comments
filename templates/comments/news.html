@@ -19,6 +19,8 @@
 {% for ct in cts %}
 {{ ct.text }} by {{ct.user.username}}; {{ct.uuid}} upvotes: {{ct.upvotes}}
 <button id ="{{ct.uuid}}" class="upvote" data-catid="{{category.id}}" class="btn btn-mini btn-primary" type="button">Upvote</button>
+{{ct.downvotes}}
+<button id ="{{ct.uuid}}" class="downvote" data-catid="{{category.id}}" class="btn btn-mini btn-primary" type="button">Downvote</button>
 <br>
 {% endfor %}
 {% endblock content %}
