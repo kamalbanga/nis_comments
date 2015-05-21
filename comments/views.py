@@ -48,6 +48,13 @@ def delete_comment(request):
     Comment.objects.filter(uuid=comment_id).update(isDeleted=True)
     return HttpResponse("Your comment is successfully deleted")
 
+def edit_comment(request):
+    comment_id = request.GET['id']
+    content = request.GET['content']
+    Comment.objects.filter(uuid=comment_id).update(text=content)
+    return render(request,'home.html',{})
+    return HttpResponse("Your comment is edited successfully")
+
 def login(request):
     return render(request, 'login.html', {})
 

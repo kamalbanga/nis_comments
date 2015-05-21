@@ -8,20 +8,23 @@
 </p>
 <script src="{% static "vote-ajax.js" %}"></script>
 <script src="{% static "delete-comment.js" %}"></script>
+<script src="{% static "edit.js" %}"></script>
 
 <form action="{% url 'submit' news_id %}" method="post"> {% csrf_token %}
     Comment:<br>
-    <input type="text" name="comment" placeholder="Express your opinion ...">
+    <textarea type="text" name="comment" placeholder="Express your opinion ..."></textarea>
     <input type="submit" value="Submit"> <br>
 </form>
 
 {% for ct in cts %}
-{{ ct.text }} by {{ct.user.username}} Upvotes: {{ct.upvotes}}
-<button id ="{{ct.uuid}}" class="upvote" data-catid="{{category.id}}" class="btn btn-mini btn-primary" type="button">Upvote</button>
+<textarea id = "textarea_{{ct.uuid}}" style="display:none">{{ct.text}}</textarea>
+<p id = "comment_{{ct.uuid}}">{{ ct.text }}</p> by {{ct.user.username}} Upvotes: {{ct.upvotes}}
+<button comment-id ="{{ct.uuid}}" class="upvote" data-catid="{{category.id}}" class="btn btn-mini btn-primary" type="button">Upvote</button>
 Downvotes: {{ct.downvotes}}
-<button id ="{{ct.uuid}}" class="downvote" data-catid="{{category.id}}" class="btn btn-mini btn-primary" type="button">Downvote</button>
+<button comment-id="{{ct.uuid}}" class="downvote" data-catid="{{category.id}}" class="btn btn-mini btn-primary" type="button">Downvote</button>
 {% ifequal ct.user request.user %}
-<button id="{{ct.uuid}}" class="delete_comment">Delete</button>
+<button data-id="{{ct.uuid}}" class="delete_comment">Delete</button>
+<button data-id="edit_{{ct.uuid}}" class="edit_comment">Edit</button>
 {% endifequal %}
 <br>
 {% endfor %}
