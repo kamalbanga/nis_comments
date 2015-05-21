@@ -23,7 +23,7 @@
 Downvotes: {{ct.downvotes}}
 <button comment-id="{{ct.uuid}}" class="downvote" data-catid="{{category.id}}" class="btn btn-mini btn-primary" type="button">Downvote</button>
 {% ifequal ct.user request.user %}
-<button data-id="{{ct.uuid}}" class="delete_comment">Delete</button>
+<button comment-id="{{ct.uuid}}" class="delete_comment">Delete</button>
 <button data-id="edit_{{ct.uuid}}" class="edit_comment">Edit</button>
 {% endifequal %}
 <br>
