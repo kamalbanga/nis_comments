@@ -1,3 +1,5 @@
+from django import forms
+from django.contrib.auth.forms import UserCreationForm
 from django.shortcuts import render
 from django.http import HttpResponseRedirect, HttpResponse
 from django.template import RequestContext, loader, Context
@@ -54,6 +56,18 @@ def edit_comment(request):
     Comment.objects.filter(uuid=comment_id).update(text=content)
     return render(request,'home.html',{})
     return HttpResponse("Your comment is edited successfully")
+
+def register(request):
+    if request.method == 'POST':
+        form = UserCreationForm(request.POST)
+        if form.is_valid():
+            new_user = form.save()
+            return HttpResponse("New user created! <a href='/'>Home</a>.")
+    else:
+        form = UserCreationForm()
+    return render(request, "registration/register.html", {
+        'form': form,
+    })
 
 def login(request):
     return render(request, 'login.html', {})

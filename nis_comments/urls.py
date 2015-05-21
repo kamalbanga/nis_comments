@@ -6,6 +6,7 @@ urlpatterns = [
     url(r'^login-view/$','comments.views.login_view'),
     url(r'^loggedin/$','comments.views.loggedin'),
     url(r'^accounts/logout/$', 'comments.views.logout'),
+    url(r'^register/$','comments.views.register'),
     url(r'^admin/', include(admin.site.urls)),
     url(r'^$', 'comments.views.home',name = 'home'),
     url(r'^vote/$', 'comments.views.vote', name='vote'),
