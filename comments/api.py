@@ -5,6 +5,7 @@ from models import *
 from tastypie.serializers import Serializer 
 from tastypie.authorization import Authorization 
 from django.contrib.auth.models import User
+from authenticate import OAuth20Authentication
 
 class UserResource(ModelResource):
 	class Meta:
@@ -14,6 +15,7 @@ class UserResource(ModelResource):
 		filtering = {
 			'username': ALL_WITH_RELATIONS,
 		}
+		# authentication = OAuth20Authentication()
 
 class NewsResource(ModelResource):
 	class Meta:
@@ -32,8 +34,9 @@ class CommentResource(ModelResource):
 		resource_name = 'comments'
 		# serializer = Serializer()
 		authorization = Authorization() # permission to POST
-		fields = ['text', 'upvotes', 'downvotes', 'resource_uri', 'user']
+		fields = ['text', 'upvotes', 'downvotes', 'resource_uri', 'user', 'created', 'last_edit', 'uuid']
 		filtering = {
 			'user': ALL_WITH_RELATIONS,
 			'news': ALL_WITH_RELATIONS,
 		}
+		authentication = OAuth20Authentication()

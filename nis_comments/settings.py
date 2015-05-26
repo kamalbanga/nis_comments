@@ -40,6 +40,8 @@ INSTALLED_APPS = (
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'provider',
+    'provider.oauth2',
     # 'rest_framework.authtoken',
     # 'oauth2_provider',
     # 'django_openid_auth',

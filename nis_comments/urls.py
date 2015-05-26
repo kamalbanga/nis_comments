@@ -32,7 +32,8 @@ v1_api.register(CommentResource())
 urlpatterns = [
     # url(r'^openid/', include('django_openid_auth.urls')),
     url(r'^api/', include(v1_api.urls)),
-    url(r'^$/', 'comments.views.home'),
+    url(r'^$', 'comments.views.home'),
+    url(r'^oauth2/', include('provider.oauth2.urls', namespace = 'oauth2')),
     # url(r'^o/', include('oauth2_provider.urls', namespace='oauth2_provider')),
     # url(r'^api-auth/', include('rest_framework.urls', namespace='rest_framework')),
     url(r'^accounts/login/$', 'comments.views.login'),
@@ -45,7 +46,6 @@ urlpatterns = [
     url(r'^vote/$', 'comments.views.vote', name='vote'),
     url(r'^delete/','comments.views.delete_comment', name='delete'),
     url(r'^edit-comment/','comments.views.edit_comment',name='edit'),
-    url(r'^follow/','comments.views.follow', name='follow'),
     url(r'^((?:\w|-)+)/submit/$','comments.views.submit', name='submit'),
     url(r'^((?:\w|-)+)/$', 'comments.views.news', name='news_id'),
     # url(r'^blog/', include('blog.urls')),
