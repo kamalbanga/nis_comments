@@ -78,6 +78,9 @@ class Comment(models.Model):
     def __unicode__(self):
         return self.text
 
+    class Meta:
+        unique_together = ('news', 'user')
+
 class Edit(models.Model):
     # editid = models.CharField(max_length=40,default='random')
     # edit_type = models.CharField(max_length=40,null=False)
