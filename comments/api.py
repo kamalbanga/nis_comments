@@ -40,3 +40,7 @@ class CommentResource(ModelResource):
 			'news': ALL_WITH_RELATIONS,
 		}
 		authentication = OAuth20Authentication()
+
+	def obj_delete(self, bundle, **kwargs):
+		c = self.obj_get(bundle, **kwargs)
+		Comment.objects.filter(uuid=c.uuid).update(isDeleted=True)
