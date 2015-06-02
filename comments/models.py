@@ -89,6 +89,7 @@ class Edit(models.Model):
     # gen_id = models.CharField(max_length=40,null=False)
     old_text = models.CharField(max_length=1000,null=False)
     new_text = models.CharField(max_length=1000,null=False)
+    edit_ts = models.DateTimeField(auto_now_add=True, blank=True, null=True)
  #todo:   edit_time = timestamp field
     # userid = models.ForeignKey(User)
 
