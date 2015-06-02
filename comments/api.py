@@ -41,6 +41,14 @@ class CommentResource(ModelResource):
 		}
 		authentication = OAuth20Authentication()
 
+	def obj_update(self, bundle, **kwargs):
+		old_text = bundle.obj.text
+		new_text = bundle.data['text']
+		Comment.objects.filter(uuid=bundle.data['uuid']).update(text=new_text) # update comment
+		c = Comment.objects.get(uuid=bundle.data['uuid'])
+		Edit(cmt=c, old_text = old_text, new_text = new_text).save()
+		return bundle
+
 	def obj_delete(self, bundle, **kwargs):
 		c = self.obj_get(bundle, **kwargs)
 		Comment.objects.filter(uuid=c.uuid).update(isDeleted=True)
