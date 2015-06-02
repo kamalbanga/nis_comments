@@ -30,7 +30,7 @@ class CommentResource(ModelResource):
 	news = fields.ForeignKey(NewsResource, 'news')
 
 	class Meta:
-		queryset = Comment.objects.all()
+		queryset = Comment.objects.filter(isDeleted=False)
 		resource_name = 'comments'
 		# serializer = Serializer()
 		authorization = Authorization() # permission to POST
