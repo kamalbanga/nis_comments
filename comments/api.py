@@ -4,7 +4,8 @@ from tastypie import fields
 from models import *
 from tastypie.serializers import Serializer 
 from tastypie.authorization import Authorization 
-from django.contrib.auth.models import User
+# from django.contrib.auth.models import User
+from comments.models import EmailUser as User
 from authenticate import OAuth20Authentication
 
 class UserResource(ModelResource):

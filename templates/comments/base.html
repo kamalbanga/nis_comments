@@ -12,7 +12,7 @@
 <body>
 
 	{% if user.is_authenticated %}
-	{{user.username}} - <a href="/accounts/logout/">Logout</a>
+	{{user.email}} - <a href="/accounts/logout/">Logout</a>
 	{% else %}
 	<a href="/accounts/login/">Login</a> | 
 	<a href="/register">Sign Up</a>

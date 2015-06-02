@@ -50,6 +50,8 @@ INSTALLED_APPS = (
     'comments',
 )
 
+AUTH_USER_MODEL = 'comments.EmailUser'
+
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',

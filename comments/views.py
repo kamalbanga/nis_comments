@@ -1,10 +1,12 @@
 from django import forms
-from django.contrib.auth.forms import UserCreationForm
+from .forms import EmailUserCreationForm as UserCreationForm
+# from django.contrib.auth.forms import UserCreationForm
 from django.shortcuts import render
 from django.http import HttpResponseRedirect, HttpResponse
 from django.template import RequestContext, loader, Context
 from comments.models import News, Comment, Vote
-from django.contrib.auth.models import User
+# from django.contrib.auth.models import User
+from comments.models import EmailUser as User
 from django.core.urlresolvers import resolve
 from django.contrib import auth
 from django.contrib.auth.decorators import login_required
