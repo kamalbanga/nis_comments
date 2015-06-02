@@ -26,7 +26,7 @@ class NewsResource(ModelResource):
 		}
 
 class CommentResource(ModelResource):
-	user = fields.ForeignKey(UserResource, 'user')
+	user = fields.ForeignKey(UserResource, 'user', full=True)
 	news = fields.ForeignKey(NewsResource, 'news')
 
 	class Meta:
