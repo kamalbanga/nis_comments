@@ -1,7 +1,8 @@
 import logging
 
 from django.http import HttpResponse
-from django.contrib.auth.models import AnonymousUser, User
+from django.contrib.auth.models import AnonymousUser
+from comments.models import EmailUser as User
 from django.utils import timezone
 
 from tastypie.authentication import Authentication

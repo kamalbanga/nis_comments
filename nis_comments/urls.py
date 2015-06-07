@@ -1,15 +1,18 @@
 from django.conf.urls import include, url
-from django.contrib.auth.models import User
+# from django.contrib.auth.models import User
+from comments.models import EmailUser as User
 from django.contrib import admin
 # from rest_framework import serializers, viewsets, routers
 from tastypie.api import Api
-from comments.api import CommentResource, UserResource, NewsResource
+from comments.api import CommentResource, UserResource, NewsResource, CreateUserResource
 admin.autodiscover()
 
 v1_api = Api(api_name = 'v1')
 v1_api.register(UserResource())
 v1_api.register(NewsResource())
 v1_api.register(CommentResource())
+v1_api.register(CreateUserResource())
+
 # comment_resource = CommentResource()
 
 # Serializers define the API representation.
@@ -31,6 +34,7 @@ v1_api.register(CommentResource())
 
 urlpatterns = [
     # url(r'^openid/', include('django_openid_auth.urls')),
+    url(r'loaderio-60e1acefed2821f0dd26089f4126ca85/','comments.views.loaderio'),
     url(r'^api/', include(v1_api.urls)),
     url(r'^$', 'comments.views.home'),
     url(r'^oauth2/', include('provider.oauth2.urls', namespace = 'oauth2')),

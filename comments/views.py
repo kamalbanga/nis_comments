@@ -87,6 +87,9 @@ def login_view(request):
         # Show an error page
         return HttpResponseRedirect("/account/invalid/")
 
+def loaderio(request):
+    return HttpResponse(open('/Users/kamal/code/django/nis_comments/loaderio-60e1acefed2821f0dd26089f4126ca85.txt').read(), content_type='text/plain')
+
 @login_required
 def loggedin(request):
     return HttpResponse("You have successfully signed in! <a href='/'>Home</a>.")

@@ -15,6 +15,9 @@ import os
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
+API_LIMIT_PER_PAGE = 30
+TASTYPIE_FULL_DEBUG = True
+TASTYPIE_DEFAULT_FORMATS = ['json']
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/1.8/howto/deployment/checklist/
@@ -40,6 +43,7 @@ INSTALLED_APPS = (
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'tastypie',
     'provider',
     'provider.oauth2',
     # 'rest_framework.authtoken',
@@ -70,7 +74,7 @@ TEMPLATES = [
 
 AUTHENTICATION_BACKENDS = (
     'django.contrib.auth.backends.ModelBackend',
-    'django_openid_auth.auth.OpenIDBackend',
+    # 'django_openid_auth.auth.OpenIDBackend',
     'tokenapi.backends.TokenBackend',
     )
 
