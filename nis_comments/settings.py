@@ -75,7 +75,7 @@ TEMPLATES = [
 AUTHENTICATION_BACKENDS = (
     'django.contrib.auth.backends.ModelBackend',
     # 'django_openid_auth.auth.OpenIDBackend',
-    'tokenapi.backends.TokenBackend',
+    # 'tokenapi.backends.TokenBackend',
     )
 
 OAUTH2_PROVIDER = {
