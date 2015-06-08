@@ -49,7 +49,7 @@ INSTALLED_APPS = (
     # 'rest_framework.authtoken',
     # 'oauth2_provider',
     # 'django_openid_auth',
-    'tokenapi',
+    # 'tokenapi',
     # 'rest_framework',
     'comments',
 )
