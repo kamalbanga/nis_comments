@@ -71,7 +71,7 @@ class CommentResource(ModelResource):
 
 	class Meta:
 		queryset = Comment.objects.filter(isDeleted=False)
-		resource_name = 'comments'
+		resource_name = 'opinions'
 		# serializer = Serializer()
 		authorization = Authorization() # permission to POST
 		fields = ['text', 'upvotes', 'downvotes', 'resource_uri', 'user', 'created', 'last_edit', 'uuid']
