@@ -48,6 +48,7 @@ class OAuth20Authentication(Authentication):
         """
         logging.info("OAuth20Authentication")
 
+        print "in auth.py: request = ", request
         try:
             key = request.GET.get('oauth_consumer_key')
             if not key:
