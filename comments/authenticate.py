@@ -82,6 +82,8 @@ class OAuth20Authentication(Authentication):
 def verify_access_token(key):
     # Check if key is in AccessToken key
     try:
+        print "AccessToken objects = ", AccessToken.objects.all()
+        print "key = ", key
         token = AccessToken.objects.get(token=key)
 
         # Check if token has expired
