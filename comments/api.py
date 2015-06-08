@@ -12,6 +12,7 @@ from authenticate import OAuth20Authentication
 from django.db import models, IntegrityError
 from tastypie.models import create_api_key, ApiKey
 from tastypie.exceptions import *
+from provider.oauth2.models import Client
 
 models.signals.post_save.connect(create_api_key, sender=User)
 
@@ -31,6 +32,9 @@ class CreateUserResource(ModelResource):
 			bundle = super(CreateUserResource, self).obj_create(bundle, **kwargs)
 			bundle.obj.set_password(bundle.data.get('password'))
 			bundle.obj.save()
+			c = Client(user=bundle.obj, name='nis-opinions', client_type=1, url='http://nis-opinions.beanstalk.com')
+			c.save()
+			print "c.client_id = ", c.client_id, " c.client_secret = ", c.client_secret
 			print "bundle.obj = ", bundle.obj
 			print "dir(bundle.obj) = ", dir(bundle.obj), "type(bundle.obj) = ", type(bundle.obj)
 			print "user passwd = ", bundle.obj.password
@@ -91,8 +95,8 @@ class CommentResource(ModelResource):
 		c = self.obj_get(bundle, **kwargs)
 		Comment.objects.filter(uuid=c.uuid).update(isDeleted=True)
 
-	def delete_detail(self, bundle, **kwargs):
-		return bundle.obj.user == bundle.request.user
+	# def delete_detail(self, bundle, **kwargs):
+		# return bundle.obj.user == bundle.request.user
 		# print "self.get_object_list(request) = ", self.get_object_list(request)
 		# print "request = ", request, " request.user = ", request.user
 		# print "kwargs = ", kwargs, " dir(kwargs) = ", dir(kwargs)
