@@ -45,7 +45,7 @@ INSTALLED_APPS = (
     'django.contrib.staticfiles',
     'tastypie',
     'provider',
-    'provider.oauth2',
+    # 'provider.oauth2',
     # 'rest_framework.authtoken',
     # 'oauth2_provider',
     # 'django_openid_auth',
