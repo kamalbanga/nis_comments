@@ -48,7 +48,6 @@ class OAuth20Authentication(Authentication):
         """
         logging.info("OAuth20Authentication")
 
-        print "in auth.py: request = ", request
         try:
             key = request.GET.get('oauth_consumer_key')
             if not key:
@@ -83,8 +82,6 @@ class OAuth20Authentication(Authentication):
 def verify_access_token(key):
     # Check if key is in AccessToken key
     try:
-        print "AccessToken objects = ", AccessToken.objects.all()
-        print "key = ", key
         token = AccessToken.objects.get(token=key)
 
         # Check if token has expired
