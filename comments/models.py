@@ -71,7 +71,7 @@ class Comment(models.Model):
     upvotes = models.PositiveIntegerField(default=0)
     downvotes = models.PositiveIntegerField(default=0)
     isDeleted = models.BooleanField(default=False)
-    votes = models.ManyToManyField(EmailUser, through='Vote', related_name='votes_table', default=None)
+    votes = models.ManyToManyField(EmailUser, through='Vote', related_name='votes_table', blank=True, default=None)
     created = models.DateTimeField(auto_now_add=True, blank=True, null=True)
     last_edit = models.DateTimeField(auto_now=True, blank=True, null=True)
 
@@ -94,7 +94,21 @@ class Edit(models.Model):
     # userid = models.ForeignKey(User)
 
 class Vote(models.Model):
-    cmt = models.ForeignKey(Comment)
-    user = models.ForeignKey(EmailUser)
+    comment = models.ForeignKey(Comment, null=True, blank=True, default=None)
+    user = models.ForeignKey(EmailUser, null=True, blank=True, default=None)
     vote_type = models.SmallIntegerField(default=0) # vote_type is +1 for upvote & -1 for downvote
     ts = models.DateTimeField(auto_now_add=True, blank=True, null=True)
+
+    def __unicode__(self):
+        if self.vote_type == 1:
+            vote_type_str = '+1'
+        else:
+            vote_type_str = '-1'
+        return vote_type_str + " by " + self.user.email + " on " + self.Comment.text
+
+class Follow(models.Model):
+    follower = models.ForeignKey(EmailUser, related_name='follower', null=True, blank=True)
+    followed = models.ForeignKey(EmailUser, related_name='followed', null=True, blank=True)
+
+    def __unicode__(self):
+        return self.follower.email + "->" + self.followed.email

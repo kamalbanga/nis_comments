@@ -4,7 +4,7 @@ from comments.models import EmailUser as User
 from django.contrib import admin
 # from rest_framework import serializers, viewsets, routers
 from tastypie.api import Api
-from comments.api import CommentResource, UserResource, NewsResource, CreateUserResource
+from comments.api import CommentResource, UserResource, NewsResource, CreateUserResource, FollowResource, VoteResource
 admin.autodiscover()
 
 v1_api = Api(api_name = 'v1')
@@ -12,6 +12,8 @@ v1_api.register(UserResource())
 v1_api.register(NewsResource())
 v1_api.register(CommentResource())
 v1_api.register(CreateUserResource())
+v1_api.register(FollowResource())
+v1_api.register(VoteResource())
 
 # comment_resource = CommentResource()
 

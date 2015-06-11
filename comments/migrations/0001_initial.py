@@ -58,7 +58,19 @@ class Migration(migrations.Migration):
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
                 ('old_text', models.CharField(max_length=1000)),
                 ('new_text', models.CharField(max_length=1000)),
+                ('edit_ts', models.DateTimeField(auto_now_add=True, null=True)),
                 ('cmt', models.ForeignKey(to='comments.Comment')),
+            ],
+            options={
+            },
+            bases=(models.Model,),
+        ),
+        migrations.CreateModel(
+            name='Follow',
+            fields=[
+                ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
+                ('followed', models.ForeignKey(related_name=b'followed', blank=True, to=settings.AUTH_USER_MODEL, null=True)),
+                ('follower', models.ForeignKey(related_name=b'follower', blank=True, to=settings.AUTH_USER_MODEL, null=True)),
             ],
             options={
             },
@@ -82,8 +94,8 @@ class Migration(migrations.Migration):
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
                 ('vote_type', models.SmallIntegerField(default=0)),
                 ('ts', models.DateTimeField(auto_now_add=True, null=True)),
-                ('cmt', models.ForeignKey(to='comments.Comment')),
-                ('user', models.ForeignKey(to=settings.AUTH_USER_MODEL)),
+                ('comment', models.ForeignKey(default=None, blank=True, to='comments.Comment', null=True)),
+                ('user', models.ForeignKey(default=None, blank=True, to=settings.AUTH_USER_MODEL, null=True)),
             ],
             options={
             },
@@ -104,7 +116,11 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='comment',
             name='votes',
-            field=models.ManyToManyField(default=None, related_name=b'votes_table', through='comments.Vote', to=settings.AUTH_USER_MODEL),
+            field=models.ManyToManyField(default=None, related_name=b'votes_table', through='comments.Vote', to=settings.AUTH_USER_MODEL, blank=True),
             preserve_default=True,
+        ),
+        migrations.AlterUniqueTogether(
+            name='comment',
+            unique_together=set([('news', 'user')]),
         ),
     ]
