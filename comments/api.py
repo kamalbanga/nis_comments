@@ -83,7 +83,7 @@ class CommentResource(ModelResource):
 		fields = ['text', 'upvotes', 'downvotes', 'resource_uri', 'user', 'created', 'last_edit', 'uuid', 'news_slug']
 		filtering = {
 			'user': ALL_WITH_RELATIONS,
-			'news': ALL_WITH_RELATIONS,
+			'news_slug': ALL_WITH_RELATIONS,
 		}
 		# authentication = ApiKeyAuthentication()
 		authentication = OAuth20Authentication()
