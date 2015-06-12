@@ -72,7 +72,7 @@ class NewsResource(ModelResource):
 
 class CommentResource(ModelResource):
 	user = fields.ForeignKey(UserResource, 'user', full=True)
-	news = fields.ForeignKey(NewsResource, 'news')
+	# news = fields.ForeignKey(NewsResource, 'news')
 
 	class Meta:
 		queryset = Comment.objects.filter(isDeleted=False)
@@ -80,7 +80,7 @@ class CommentResource(ModelResource):
 		always_return_data = True
 		# serializer = Serializer()
 		authorization = Authorization() # permission to POST
-		fields = ['text', 'upvotes', 'downvotes', 'resource_uri', 'user', 'created', 'last_edit', 'uuid']
+		fields = ['text', 'upvotes', 'downvotes', 'resource_uri', 'user', 'created', 'last_edit', 'uuid', 'news_slug']
 		filtering = {
 			'user': ALL_WITH_RELATIONS,
 			'news': ALL_WITH_RELATIONS,
