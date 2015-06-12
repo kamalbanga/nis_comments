@@ -39,7 +39,7 @@ class CreateUserResource(ModelResource):
 			bundle.obj.save()
 			c = Client(user=bundle.obj, name='nis-opinions', client_type=1, url='http://nis-opinions.beanstalk.com')
 			c.save()
-			# print "c.client_id = ", c.client_id, " c.client_secret = ", c.client_secret
+			print "c.client_id = ", c.client_id, " c.client_secret = ", c.client_secret
 			# print "bundle.obj = ", bundle.obj
 			# print "dir(bundle.obj) = ", dir(bundle.obj), "type(bundle.obj) = ", type(bundle.obj)
 			# print "user passwd = ", bundle.obj.password
