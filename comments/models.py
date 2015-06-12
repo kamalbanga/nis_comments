@@ -26,6 +26,8 @@ class EmailUserManager(BaseUserManager):
 
 class AbstractEmailUser(AbstractBaseUser, PermissionsMixin):
     email = models.EmailField('email address', max_length=255, unique=True, db_index=True)
+    name = models.CharField(max_length=100, null=True)
+    image_url = models.URLField(null=True)
     is_staff = models.BooleanField('staff status', default=False, help_text=
         'Designates whether the use can log into this admin site.')
     is_active = models.BooleanField('active', default=True, help_text='Designates whether this user should be treated as '
