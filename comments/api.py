@@ -116,6 +116,20 @@ class FollowResource(ModelResource):
 	follower = fields.ForeignKey(UserResource, 'follower')
 	followed = fields.ForeignKey(UserResource, 'followed')
 
+	def obj_create(self, bundle, **kwargs):
+		follower_id = bundle.data['follower']
+		followed_id = bundle.data['followed']
+		follower = User.objects.get(id=follower_id)
+		followed = User.objects.get(id=followed_id)
+		f = Follow(follower=follower, followed=followed)
+		follower.follow_count = follower.follow_count + 1
+		followed.followed_count = followed.followed_count + 1
+		follower.save()
+		followed.save()
+		f.save()
+		bundle.obj = f
+		return bundle
+
 	class Meta:
 		queryset = Follow.objects.all()
 		resource_name = 'follow'
@@ -134,6 +148,11 @@ class VoteResource(ModelResource):
 			'user': ALL_WITH_RELATIONS,
 			'comment': ALL_WITH_RELATIONS,
 		}
+
+	def dehydrate(self, bundle):
+		bundle.data['comment'] = bundle.obj.comment.id
+		bundle.data['user'] = bundle.obj.user.id
+		return bundle
 
 	def obj_create(self, bundle, **kwargs):
 		c = Comment.objects.get(id=bundle.data['comment'])	

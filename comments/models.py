@@ -31,6 +31,8 @@ class AbstractEmailUser(AbstractBaseUser, PermissionsMixin):
     is_active = models.BooleanField('active', default=True, help_text='Designates whether this user should be treated as '
         'active. Unselect this instead of deleting accounts.')
     date_joined = models.DateTimeField('date joined', default=timezone.now)
+    follow_count = models.PositiveIntegerField(default=0) # no. of people this creep is stalking
+    followed_count = models.PositiveIntegerField(default=0) # no. of people following this stud
 
     objects = EmailUserManager()
     USERNAME_FIELD = 'email'
