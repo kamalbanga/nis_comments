@@ -1,19 +1,8 @@
-{% extends "base.html" %}
-
-{% block content %}
-
-  {% if form.errors %}
-    <p class="error">Sorry, that's not a valid username or password</p>
-  {% endif %}
-
-  <form action="/login-view/" method="post"> {% csrf_token %}
-    <label for="username">User name:</label>
-    <input type="text" name="username" value="" id="username">
-    <label for="password">Password:</label>
-    <input type="password" name="password" value="" id="password">
-
-    <input type="submit" value="login" />
-    <input type="hidden" name="next" value="{{ next|escape }}" />
-  </form>
-
-{% endblock %}
+{% if user and not user.is_anonymous %}
+  <a>Hello, {{ user.get_full_name }}!</a>
+  <br>
+  <a href="/logout">Logout</a>
+{% else %}
+In fb/login.html
+  <a href="{% url 'social:begin' 'facebook' %}?next={{ request.path }}">Login with FB</a>
+{% endif %}
