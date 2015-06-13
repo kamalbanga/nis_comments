@@ -1,5 +1,5 @@
 {% if user and not user.is_anonymous %}
-  <a>Hello, {{ user.get_full_name }}!</a>
+  <a>Hello, {{ user.get_full_name }}, your username is {{user.get_username}}!</a>
   <br>
   <a href="/logout">Logout</a>
 {% else %}
