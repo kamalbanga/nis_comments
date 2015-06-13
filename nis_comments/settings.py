@@ -59,6 +59,8 @@ INSTALLED_APPS = (
 )
 
 AUTH_USER_MODEL = 'comments.EmailUser'
+SOCIAL_AUTH_USER_MODEL = 'comments.EmailUser'
+SOCIAL_AUTH_USERNAME_IS_FULL_EMAIL = True
 
 TEMPLATES = [
     {
