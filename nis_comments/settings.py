@@ -27,6 +27,7 @@ SECRET_KEY = 'wmlgfm!)ahsj%1_pad#l808!9vksmwetfv96ipaw1z5@!3d$hb'
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
+APPEND_SLASH=False
 
 ALLOWED_HOSTS = []
 
