@@ -105,6 +105,18 @@ class CommentResource(ModelResource):
 		Edit(cmt=cmt, old_text = old_text, new_text = new_text).save()
 		return bundle
 
+	def obj_create(self, bundle, **kwargs):
+		news_slug = bundle.data['news_slug']
+		user = bundle.request.user
+		text = bundle.data['text']		
+		c = Comment(user=user, news_slug=news_slug, text=text)
+		try:
+			c.save()
+		except IntegrityError:
+			raise ImmediateHttpResponse(response=http.HttpForbidden())
+		bundle.obj = c
+		return bundle
+
 	# def obj_create(self, bundle, **kwargs):
 		# text = bundle.data['text']
 		# news = 
