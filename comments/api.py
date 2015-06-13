@@ -88,6 +88,7 @@ class CommentResource(ModelResource):
 		filtering = {
 			'user': ALL_WITH_RELATIONS,
 			'news_slug': ALL_WITH_RELATIONS,
+			'id': ALL_WITH_RELATIONS,
 		}
 		# authentication = ApiKeyAuthentication()
 		authentication = OAuth20Authentication()
@@ -209,9 +210,6 @@ class VoteResource(ModelResource):
 		Vote(comment = c, user = bundle.request.user, vote_type = current_vote_type).save()
 		return bundle
 
-# class VoteResource(ModelResource):
-	# class Meta:
-		# allowed_methods = ['post']
 
 	# def delete_detail(self, bundle, **kwargs):
 		# return bundle.obj.user == bundle.request.user
