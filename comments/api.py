@@ -62,6 +62,10 @@ class UserResource(ModelResource):
 		# authentication = ApiKeyAuthentication() #OAuth20Authentication()
 		authentication = OAuth20Authentication()
 
+	def dehydrate(self, bundle):
+		del bundle.data['resource_uri']
+		return bundle
+
 class NewsResource(ModelResource):
 	class Meta:
 		queryset = News.objects.all()
@@ -80,7 +84,7 @@ class CommentResource(ModelResource):
 		always_return_data = True
 		# serializer = Serializer()
 		authorization = Authorization() # permission to POST
-		fields = ['text', 'upvotes', 'downvotes', 'resource_uri', 'user', 'created', 'last_edit', 'uuid', 'news_slug']
+		fields = ['text', 'upvotes', 'downvotes', 'resource_uri', 'user', 'created', 'last_edit', 'news_slug', 'id']
 		filtering = {
 			'user': ALL_WITH_RELATIONS,
 			'news_slug': ALL_WITH_RELATIONS,
@@ -117,12 +121,13 @@ class CommentResource(ModelResource):
 		bundle.obj = c
 		return bundle
 
-	# def obj_create(self, bundle, **kwargs):
-		# text = bundle.data['text']
-		# news = 
 	def obj_delete(self, bundle, **kwargs):
 		c = self.obj_get(bundle, **kwargs)
 		Comment.objects.filter(uuid=c.uuid).update(isDeleted=True)
+
+	def dehydrate(self, bundle):
+		del bundle.data['resource_uri']
+		return bundle
 
 class FollowResource(ModelResource):
 	follower = fields.ForeignKey(UserResource, 'follower')
@@ -154,8 +159,9 @@ class VoteResource(ModelResource):
 
 	class Meta:
 		queryset = Vote.objects.all()
+		authentication = OAuth20Authentication()
 		resource_name = 'votes'
-		fields = ['user', 'comment', 'vote_type']
+		fields = ['user', 'comment', 'vote_type', 'id']
 		filtering = {
 			'user': ALL_WITH_RELATIONS,
 			'comment': ALL_WITH_RELATIONS,
@@ -164,6 +170,7 @@ class VoteResource(ModelResource):
 	def dehydrate(self, bundle):
 		bundle.data['comment'] = bundle.obj.comment.id
 		bundle.data['user'] = bundle.obj.user.id
+		del bundle.data['resource_uri']
 		return bundle
 
 	def obj_create(self, bundle, **kwargs):
