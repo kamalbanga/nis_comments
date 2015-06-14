@@ -36,7 +36,8 @@ v1_api.register(VoteResource())
 
 urlpatterns = [
     # url(r'^openid/', include('django_openid_auth.urls')),
-    url(r'loaderio-60e1acefed2821f0dd26089f4126ca85/','comments.views.loaderio'),
+    # url(r'loaderio-60e1acefed2821f0dd26089f4126ca85/','comments.views.loaderio'),
+    url(r'^register-by-token/(?P<backend>[^/]+)/$', 'comments.views.register_by_access_token'),
     url('', include('social.apps.django_app.urls', namespace='social')),
     url(r'^$', 'comments.sample_view.login'),
     url(r'^home/$', 'comments.sample_view.home'),
