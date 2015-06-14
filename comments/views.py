@@ -9,7 +9,13 @@ from comments.models import News, Comment, Vote
 from comments.models import EmailUser as User
 from django.core.urlresolvers import resolve
 from django.contrib import auth
+from django.contrib.auth import login
+from social.apps.django_app.utils import psa
 from django.contrib.auth.decorators import login_required
+from provider import scope
+from provider.oauth2.views import AccessTokenView
+from provider.oauth2.models import Client
+from social.apps.django_app.default.models import UserSocialAuth
 import uuid
 
 def home(request):
@@ -20,6 +26,21 @@ def news(request, url_arg):
     n = News.objects.all().get(news_id=url_arg)
     dict = {'news': n.text, 'cts': c, 'news_id': n.news_id}
     return render(request, 'news.html', dict)
+
+@psa('social:complete')
+def register_by_access_token(request, backend):
+    token = request.GET.get('access_token')
+    user = request.backend.do_auth(request.GET.get('access_token'))
+    user_social_auth_qs = UserSocialAuth.objects.filter(provider="facebook", extra_data__contains=token)
+    user_social_auth = user_social_auth_qs.get()
+    cl = Client(user = user, name = 'opinion', client_type=1, url = 'http://opinion.elasticbeanstalk.com')
+    cl.save()
+    at = AccessTokenView().get_access_token(request, user_social_auth.user, scope.to_int('read', 'write'), cl)
+    if user:
+        auth.login(request, user)
+        return HttpResponse("%s" % at.token)
+    else:
+        return HttpResponse('ERROR')
 
 @login_required
 def submit(request, url_arg):
