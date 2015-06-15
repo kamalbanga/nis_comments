@@ -4,7 +4,7 @@ from .forms import EmailUserCreationForm as UserCreationForm
 from django.shortcuts import render
 from django.http import HttpResponseRedirect, HttpResponse
 from django.template import RequestContext, loader, Context
-from comments.models import News, Comment, Vote
+from comments.models import News, Comment, Vote, EmailUser
 # from django.contrib.auth.models import User
 from comments.models import EmailUser as User
 from django.core.urlresolvers import resolve
@@ -16,6 +16,7 @@ from provider import scope
 from provider.oauth2.views import AccessTokenView
 from provider.oauth2.models import Client
 from social.apps.django_app.default.models import UserSocialAuth
+import json, requests
 import uuid
 
 def home(request):
@@ -30,14 +31,25 @@ def news(request, url_arg):
 @psa('social:complete')
 def register_by_access_token(request, backend):
     token = request.GET.get('access_token')
-    user = request.backend.do_auth(request.GET.get('access_token'))
-    user_social_auth_qs = UserSocialAuth.objects.filter(provider="facebook", extra_data__contains=token)
-    user_social_auth = user_social_auth_qs.get()
+    fb_response = requests.get('https://graph.facebook.com/me?access_token=' + token)
+    if fb_response.status_code != 200:
+        return HttpResponse("Invalid access token")
+    data_json = fb_response.content
+    data_dict = json.loads(data_json)
+    user = EmailUser.objects.filter(email=data_dict['email'])
+    if user.exists():
+        user = user[0]
+    else:
+        user = EmailUser(username=data_dict['name'], name=data_dict['name'], email=data_dict['email']) # , email=data_dict['email']
+        user.save()
+    # user = request.backend.do_auth(token)
+    print "user = ", user
+    # user_social_auth_qs = UserSocialAuth.objects.filter(provider="facebook", extra_data__contains=token)
+    # user_social_auth = user_social_auth_qs.get()
     cl = Client(user = user, name = 'opinion', client_type=1, url = 'http://opinion.elasticbeanstalk.com')
     cl.save()
-    at = AccessTokenView().get_access_token(request, user_social_auth.user, scope.to_int('read', 'write'), cl)
+    at = AccessTokenView().get_access_token(request, user, scope.to_int('read', 'write'), cl)
     if user:
-        auth.login(request, user)
         return HttpResponse("%s" % at.token)
     else:
         return HttpResponse('ERROR')
