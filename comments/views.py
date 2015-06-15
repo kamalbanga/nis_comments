@@ -1,11 +1,9 @@
 from django import forms
 from .forms import EmailUserCreationForm as UserCreationForm
-# from django.contrib.auth.forms import UserCreationForm
 from django.shortcuts import render
 from django.http import HttpResponseRedirect, HttpResponse
 from django.template import RequestContext, loader, Context
 from comments.models import News, Comment, Vote, EmailUser
-# from django.contrib.auth.models import User
 from comments.models import EmailUser as User
 from django.core.urlresolvers import resolve
 from django.contrib import auth
@@ -29,7 +27,6 @@ def news(request, url_arg):
     dict = {'news': n.text, 'cts': c, 'news_id': n.news_id}
     return render(request, 'news.html', dict)
 
-@psa('social:complete')
 def register_by_access_token(request, backend):
     token = request.GET.get('access_token')
     fb_response = requests.get('https://graph.facebook.com/me?access_token=' + token)
@@ -37,17 +34,12 @@ def register_by_access_token(request, backend):
         return HttpResponse("Invalid access token")
     data_json = fb_response.content
     data_dict = json.loads(data_json)
-    print "data_dict['id'] = ", data_dict['id']
     user = EmailUser.objects.filter(email=data_dict['email'])
     if user.exists():
         user = user[0]
     else:
         user = EmailUser(username=data_dict['name'], name=data_dict['name'], email=data_dict['email'], facebook_id = data_dict['id'], source = 'facebook')
         user.save()
-    # user = request.backend.do_auth(token)
-    print "user = ", user
-    # user_social_auth_qs = UserSocialAuth.objects.filter(provider="facebook", extra_data__contains=token)
-    # user_social_auth = user_social_auth_qs.get()
     cl = Client(user = user, name = 'opinion', client_type=1, url = 'http://opinion.elasticbeanstalk.com')
     cl.save()
     at = AccessTokenView().get_access_token(request, user, scope.to_int('read', 'write'), cl)

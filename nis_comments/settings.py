@@ -46,15 +46,9 @@ INSTALLED_APPS = (
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'social.apps.django_app.default',
     'tastypie',
     'provider',
     # 'provider.oauth2',
-    # 'rest_framework.authtoken',
-    # 'oauth2_provider',
-    # 'django_openid_auth',
-    # 'tokenapi',
-    # 'rest_framework',
     'comments',
 )
 
@@ -79,10 +73,7 @@ TEMPLATES = [
 ]
 
 AUTHENTICATION_BACKENDS = (
-    'social.backends.facebook.FacebookOAuth2',
     'django.contrib.auth.backends.ModelBackend',
-    # 'django_openid_auth.auth.OpenIDBackend',
-    # 'tokenapi.backends.TokenBackend',
     )
 
 OAUTH2_PROVIDER = {
@@ -111,8 +102,6 @@ TEMPLATE_CONTEXT_PROCESSORS = (
     'django.core.context_processors.static',
     'django.core.context_processors.tz',
     'django.contrib.messages.context_processors.messages',
-    'social.apps.django_app.context_processors.backends',
-    'social.apps.django_app.context_processors.login_redirect',
 )
 
 MIDDLEWARE_CLASSES = (
