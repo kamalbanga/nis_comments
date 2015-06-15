@@ -29,6 +29,8 @@ class AbstractEmailUser(AbstractBaseUser, PermissionsMixin):
     username = models.CharField(max_length=100, null=True)
     name = models.CharField(max_length=100, null=True)
     image_url = models.URLField(null=True)
+    source = models.CharField(max_length=20, null=True) # facebook, nis ...
+    facebook_id = models.CharField(max_length=40, null=True) # facebook profile id
     is_staff = models.BooleanField('staff status', default=False, help_text=
         'Designates whether the use can log into this admin site.')
     is_active = models.BooleanField('active', default=True, help_text='Designates whether this user should be treated as '

@@ -16,7 +16,8 @@ from provider import scope
 from provider.oauth2.views import AccessTokenView
 from provider.oauth2.models import Client
 from social.apps.django_app.default.models import UserSocialAuth
-import json, requests
+import json # for sending user data as json
+import requests # for GETing https://graph.facebook.com/me?access_token=...
 import uuid
 
 def home(request):
@@ -36,11 +37,12 @@ def register_by_access_token(request, backend):
         return HttpResponse("Invalid access token")
     data_json = fb_response.content
     data_dict = json.loads(data_json)
+    print "data_dict['id'] = ", data_dict['id']
     user = EmailUser.objects.filter(email=data_dict['email'])
     if user.exists():
         user = user[0]
     else:
-        user = EmailUser(username=data_dict['name'], name=data_dict['name'], email=data_dict['email']) # , email=data_dict['email']
+        user = EmailUser(username=data_dict['name'], name=data_dict['name'], email=data_dict['email'], facebook_id = data_dict['id'], source = 'facebook')
         user.save()
     # user = request.backend.do_auth(token)
     print "user = ", user
@@ -49,8 +51,14 @@ def register_by_access_token(request, backend):
     cl = Client(user = user, name = 'opinion', client_type=1, url = 'http://opinion.elasticbeanstalk.com')
     cl.save()
     at = AccessTokenView().get_access_token(request, user, scope.to_int('read', 'write'), cl)
+    user_data = {'token': at.token}
+    user_data['id'] = user.id
+    user_data['name'] = user.name
+    user_data['email'] = user.email
+    print "facebook_id = ", user.facebook_id
+    user_data['image_url'] = 'https://graph.facebook.com/v2.3/' + user.facebook_id + '/picture?type=large'
     if user:
-        return HttpResponse("%s" % at.token)
+        return HttpResponse(json.dumps(user_data), content_type="application/json")
     else:
         return HttpResponse('ERROR')
 
