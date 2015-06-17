@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+{% load staticfiles %}
+
+{% block content %}
+<script src="{% static "jquery-2.1.4.min.js" %}"></script>
+<link rel="stylesheet" href="{% static "bootstrap-3.3.4/css/bootstrap-theme.min.css" %}">
+<link rel="stylesheet" href="{% static "bootstrap-3.3.4/css/bootstrap.min.css" %}">
+<script src="{% static "adminpanel.js" %}"></script>
+
+<style>
+.opinion-box {
+	border: 1px solid black;
+}
+</style>
+<div class='container-fluid'>
+	<div class='row'>
+		<div class='col-sm-4'>Loading News ...</div>
+		<div class='col-sm-8'></div>
+	</div>
+</div>
+{% endblock content %}

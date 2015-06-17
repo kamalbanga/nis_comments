@@ -3,17 +3,17 @@ from .forms import EmailUserCreationForm as UserCreationForm
 from django.shortcuts import render
 from django.http import HttpResponseRedirect, HttpResponse
 from django.template import RequestContext, loader, Context
-from comments.models import News, Comment, Vote, EmailUser
+from comments.models import News, Comment, Vote, AllApproved
 from comments.models import EmailUser as User
 from django.core.urlresolvers import resolve
 from django.contrib import auth
 from django.contrib.auth import login
-from social.apps.django_app.utils import psa
 from django.contrib.auth.decorators import login_required
+from django.db import models, IntegrityError
 from provider import scope
 from provider.oauth2.views import AccessTokenView
 from provider.oauth2.models import Client
-from social.apps.django_app.default.models import UserSocialAuth
+# from django.contrib.auth.models import User as SU
 import json # for sending user data as json
 import requests # for GETing https://graph.facebook.com/me?access_token=...
 import uuid
@@ -21,11 +21,11 @@ import uuid
 def home(request):
     return render(request, 'home.html', {'news': News.objects.all()})
 
-def news(request, url_arg):
-    c = Comment.objects.all().filter(news__news_id=url_arg, isDeleted=False)
-    n = News.objects.all().get(news_id=url_arg)
-    dict = {'news': n.text, 'cts': c, 'news_id': n.news_id}
-    return render(request, 'news.html', dict)
+# def news(request, url_arg):
+#     c = Comment.objects.all().filter(news__news_id=url_arg, is_deleted=False)
+#     n = News.objects.all().get(news_id=url_arg)
+#     dict = {'news': n.text, 'cts': c, 'news_id': n.news_id}
+#     return render(request, 'news.html', dict)
 
 def register_by_access_token(request, backend):
     token = request.GET.get('access_token')
@@ -53,6 +53,47 @@ def register_by_access_token(request, backend):
         return HttpResponse(json.dumps(user_data), content_type="application/json")
     else:
         return HttpResponse('ERROR')
+
+def admin_panel(request):
+    # print "in admin_panel: user = ", request.user
+    opinions = Comment.objects.filter(is_approved=None).order_by('-created')
+    dict = {'opinions': opinions}
+    return render(request, 'admin_panel.html', dict)
+
+@login_required
+def admin_panel2(request):
+    return render(request, 'opinionsPerNews.html', {})
+
+def approve(request):
+    opinion_id = request.GET['id']
+    flag = request.GET['flag']
+    print "in approve, opinion_id = ", "flag = ", flag
+    c = Comment.objects.get(id=opinion_id)
+    if flag == '1':
+        c.is_approved = True
+    else:
+        c.is_approved = False
+    c.save()
+    return HttpResponse('Approved')
+
+def allApprove(request):
+    news_id = request.GET['news-id']
+    flag = request.GET['flag']
+    if flag == '1':
+        flag = True
+    else:
+        flag = False
+    try:
+        AllApproved(news_id=news_id, all_approved=flag).save()
+    except IntegrityError:
+        return HttpResponse(status=409,reason='Duplicate entry for news_id: ' + news_id)
+    return HttpResponse(status=201)
+    # Comment.objects.filter(news_id=news_id).update(all_approved=flag)
+
+def loadAllNews(request):
+    news = requests.post('http://crud.newsinshorts.com/app/loadAllNews')
+    json = news.text[9:]
+    return HttpResponse(json, content_type='application/json')
 
 @login_required
 def submit(request, url_arg):
@@ -82,7 +123,7 @@ def vote(request):
 @login_required
 def delete_comment(request):
     comment_id = request.GET['uuid']
-    Comment.objects.filter(uuid=comment_id).update(isDeleted=True)
+    Comment.objects.filter(uuid=comment_id).update(is_deleted=True)
     return HttpResponse("Your comment is successfully deleted")
 
 def edit_comment(request):
@@ -110,15 +151,23 @@ def login(request):
 def login_view(request):
     username = request.POST.get('username', '')
     password = request.POST.get('password', '')
-    user = auth.authenticate(username=username, password=password)
-    if user is not None and user.is_active:
-        # Correct password, and the user is marked "active"
+    u = User.objects.filter(source='ORP', username=username)
+    if not u.exists():
+        response = requests.post('http://editorpanel.newsinshorts.com/isAdmin?username=' + username + '&password=' + password)
+        if response.text == 'YES':
+            user = User(username=username)
+            user.set_password(password)
+            user.source = 'ORP'
+            user.save()
+        else:
+            return HttpResponse("Oops. No such user. Contact Ramlal")
+    user = User.objects.get(source='ORP', username=username)
+    if user.check_password(password):
+        user.backend = 'django.contrib.auth.backends.ModelBackend'
         auth.login(request, user)
-        # Redirect to a success page.
         return HttpResponseRedirect("/loggedin/")
     else:
-        # Show an error page
-        return HttpResponseRedirect("/account/invalid/")
+        return HttpResponse('Oops. Wrong password')
 
 def loaderio(request):
     return HttpResponse(open('/Users/kamal/code/django/nis_comments/loaderio-60e1acefed2821f0dd26089f4126ca85.txt').read(), content_type='text/plain')

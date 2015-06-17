@@ -84,10 +84,10 @@ class CommentResource(ModelResource):
 		always_return_data = True
 		# serializer = Serializer()
 		authorization = Authorization() # permission to POST
-		fields = ['text', 'upvotes', 'downvotes', 'resource_uri', 'user', 'created', 'last_edit', 'news_slug', 'id', 'is_approved', 'is_deleted']
+		fields = ['text', 'upvotes', 'downvotes', 'resource_uri', 'user', 'created', 'last_edit', 'news_id', 'id', 'is_approved', 'is_deleted']
 		filtering = {
 			'user': ALL_WITH_RELATIONS,
-			'news_slug': ALL_WITH_RELATIONS,
+			'news_id': ALL_WITH_RELATIONS,
 			'id': ALL_WITH_RELATIONS,
 			'is_approved': ALL_WITH_RELATIONS,
 			'is_deleted': ALL_WITH_RELATIONS,
@@ -148,11 +148,14 @@ class CommentResource(ModelResource):
 		return bundle
 
 	def obj_create(self, bundle, **kwargs):
-		news_slug = bundle.data['news_slug']
+		news_id = bundle.data['news_id']
 		user = bundle.request.user
 		text = bundle.data['text']		
-		print "news_slug = ", news_slug, "text = ", text
-		c = Comment(user=user, news_slug=news_slug, text=text)
+		print "news_id = ", news_id, "text = ", text
+		c = Comment(user=user, news_id=news_id, text=text)
+		all_approved_obj = AllApproved.objects.filter(news_id=news_id)
+		if all_approved_obj.exists():
+			c.is_approved = all_approved_obj[0].all_approved
 		try:
 			c.save()
 		except IntegrityError:

@@ -12,14 +12,14 @@
 <body>
 
 	{% if user.is_authenticated %}
-	{{user.email}} - <a href="/accounts/logout/">Logout</a>
+	{{user.username}} - <a href="/accounts/logout/">Logout</a>
 	{% else %}
 	<a href="/accounts/login/">Login</a> | 
 	<a href="/register">Sign Up</a>
 	{% endif %}
 	<br>
 
-	<a href="/">Home</a> <br>
+	<!-- <a href="/">Home</a> <br> -->
 
 	{% block content %}{% endblock content %}
 </body>

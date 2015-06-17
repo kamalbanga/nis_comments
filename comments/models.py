@@ -83,7 +83,7 @@ class News(models.Model):
 
 class Comment(models.Model):
     uuid = models.CharField(max_length=40, default=uuid.uuid4)
-    news_slug = models.CharField(max_length=100, null=True)
+    news_id = models.CharField(max_length=100, null=True)
     user = models.ForeignKey(EmailUser)
     text = models.CharField(max_length=300, null=True)
     upvotes = models.PositiveIntegerField(default=0)
@@ -98,7 +98,7 @@ class Comment(models.Model):
         return self.text
 
     class Meta:
-        unique_together = ('news_slug', 'user')
+        unique_together = ('news_id', 'user')
 
 class Edit(models.Model):
     # editid = models.CharField(max_length=40,default='random')
