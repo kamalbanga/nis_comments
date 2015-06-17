@@ -164,7 +164,16 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/1.8/howto/static-files/
 
 STATIC_URL = '/comments/static/'
-STATIC_ROOT = os.path.join(BASE_DIR, 'comments', 'static')
+# STATIC_ROOT = os.path.join(BASE_DIR, 'comments', 'static')
+STATIC_ROOT = os.path.join(
+                  os.path.dirname(
+                      os.path.dirname(
+                          os.path.abspath(__file__)
+                      )
+                  ),
+                  'static'
+              )
+# print 'static_root = ' + STATIC_ROOT
 # STATICFILES_DIRS = (
 # os.path.join(BASE_DIR, 'comments', 'static'),
 # )
