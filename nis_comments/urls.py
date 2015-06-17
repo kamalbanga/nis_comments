@@ -15,7 +15,13 @@ v1_api.register(VoteResource())
 
 urlpatterns = [
     url(r'^register-by-token/(?P<backend>[^/]+)/$', 'comments.views.register_by_access_token'),
-    url(r'^$', 'comments.sample_view.login'),
+    url(r'^api/v1/register-by-token/(?P<backend>[^/]+)/$', 'comments.views.register_by_access_token'),
+    # url(r'^admin-panel/$', 'comments.views.admin_panel'),
+    # url(r'^admin-panel2/$', 'comments.views.admin_panel2'),
+    # url(r'^admin-panel/approve/$', 'comments.views.approve'),
+    # url(r'^admin-panel/allApprove/$', 'comments.views.allApprove'),
+    # url(r'^loadAllNews/$', 'comments.views.loadAllNews'),
+    url(r'^$', 'comments.views.home'),
     url(r'^home/$', 'comments.sample_view.home'),
     url(r'^logout/$', 'comments.sample_view.logout'),
     url(r'^api/', include(v1_api.urls)),
@@ -27,10 +33,10 @@ urlpatterns = [
     url(r'^accounts/logout/$', 'comments.views.logout'),
     url(r'^register/$','comments.views.register'),
     url(r'^admin/', include(admin.site.urls)),
-    url(r'^news/$', 'comments.views.news',name = 'home'),
+    # url(r'^news/$', 'comments.views.news',name = 'home'),
     url(r'^vote/$', 'comments.views.vote', name='vote'),
     url(r'^delete/','comments.views.delete_comment', name='delete'),
     url(r'^edit-comment/','comments.views.edit_comment',name='edit'),
     url(r'^((?:\w|-)+)/submit/$','comments.views.submit', name='submit'),
-    url(r'^((?:\w|-)+)/$', 'comments.views.news', name='news_id'),
+    # url(r'^((?:\w|-)+)/$', 'comments.views.news', name='news_id'),
 ]
