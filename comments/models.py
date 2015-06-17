@@ -62,6 +62,17 @@ class EmailUser(AbstractEmailUser):
     class Meta(AbstractEmailUser.Meta):
         swappable = 'AUTH_USER_MODEL'
 
+class AllApproved(models.Model):
+    news_id = models.CharField(unique=True, max_length=200, null=True)
+    all_approved = models.BooleanField()
+
+    def __unicode__(self):
+        if self.all_approved == True:
+            string = 'Approved'
+        else:
+            string = 'Rejected'
+        return 'All ' + string + ' on ' + self.news_id
+
 class News(models.Model):
     news_id = models.CharField(max_length=1000,null=True)
     author = models.CharField(max_length=100, null=True)
@@ -77,10 +88,11 @@ class Comment(models.Model):
     text = models.CharField(max_length=300, null=True)
     upvotes = models.PositiveIntegerField(default=0)
     downvotes = models.PositiveIntegerField(default=0)
-    isDeleted = models.BooleanField(default=False)
+    is_deleted = models.BooleanField(default=False)
     votes = models.ManyToManyField(EmailUser, through='Vote', related_name='votes_table', blank=True, default=None)
     created = models.DateTimeField(auto_now_add=True, blank=True, null=True)
     last_edit = models.DateTimeField(auto_now=True, blank=True, null=True)
+    is_approved = models.NullBooleanField()
 
     def __unicode__(self):
         return self.text

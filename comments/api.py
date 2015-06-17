@@ -7,7 +7,7 @@ from tastypie.authentication import Authentication, BasicAuthentication, ApiKeyA
 from tastypie.authorization import Authorization, DjangoAuthorization
 # from django.contrib.auth.models import User
 from comments.models import EmailUser as User
-from authenticate import OAuth20Authentication
+from authenticate import OAuth20Authentication, OAuth20AuthenticationOpinions
 # from django.contrib.auth.models import User
 from django.db import models, IntegrityError
 from tastypie.models import create_api_key, ApiKey
@@ -79,19 +79,56 @@ class CommentResource(ModelResource):
 	# news = fields.ForeignKey(NewsResource, 'news')
 
 	class Meta:
-		queryset = Comment.objects.filter(isDeleted=False)
+		queryset = Comment.objects.filter(is_deleted=False)
 		resource_name = 'opinions'
 		always_return_data = True
 		# serializer = Serializer()
 		authorization = Authorization() # permission to POST
-		fields = ['text', 'upvotes', 'downvotes', 'resource_uri', 'user', 'created', 'last_edit', 'news_slug', 'id']
+		fields = ['text', 'upvotes', 'downvotes', 'resource_uri', 'user', 'created', 'last_edit', 'news_slug', 'id', 'is_approved', 'is_deleted']
 		filtering = {
 			'user': ALL_WITH_RELATIONS,
 			'news_slug': ALL_WITH_RELATIONS,
 			'id': ALL_WITH_RELATIONS,
+			'is_approved': ALL_WITH_RELATIONS,
+			'is_deleted': ALL_WITH_RELATIONS,
 		}
 		# authentication = ApiKeyAuthentication()
-		authentication = OAuth20Authentication()
+		authentication = OAuth20AuthenticationOpinions() # this doesn't need authentication on GET reqeusts
+
+	def get_object_list(self, request):
+		print "in comment's get_obj_list"
+		opinions = super(CommentResource, self).get_object_list(request).order_by('-created')
+		# if is_a == 'None':
+			# return opinions.filter(is_approved=None)
+		return opinions
+		# is_d = request.GET.get('is_deleted')
+		# if is_d is not None:
+		# 	if is_d == 'true':
+		# 		is_d = True
+		# 	else:
+		# 		is_d = False
+		# is_a = request.GET.get('is_approved')
+		# if is_a is not None:
+		# 	if is_a == 'true':
+		# 		is_a = True
+		# 	elif is_a == 'false':
+		# 		is_a = False
+		# 	else:
+		# 		is_a = 'None'
+		
+		# if is_a == 'None':
+		# 	if is_d is None:
+		# 		return opinions.filter(is_approved=None)
+		# 	else:
+		# 		return opinions.filter(is_approved=None, is_deleted=is_d)
+		# if is_d is None and is_a is None:
+		# 	return opinions
+		# elif is_d is None and is_a is not None:
+		# 	return opinions.filter(is_approved=is_a)
+		# elif is_d is not None and is_a is None:
+		# 	return opinions.filter(is_deleted=is_d)
+		# else:
+		# 	return opinions.filter(is_deleted=is_d, is_approved=is_a)
 
 	def obj_update(self, bundle, **kwargs):
 		# print "bunble.obj = ", bundle.obj, " bundle.request = ", bundle.request
@@ -114,6 +151,7 @@ class CommentResource(ModelResource):
 		news_slug = bundle.data['news_slug']
 		user = bundle.request.user
 		text = bundle.data['text']		
+		print "news_slug = ", news_slug, "text = ", text
 		c = Comment(user=user, news_slug=news_slug, text=text)
 		try:
 			c.save()
@@ -124,11 +162,11 @@ class CommentResource(ModelResource):
 
 	def obj_delete(self, bundle, **kwargs):
 		c = self.obj_get(bundle, **kwargs)
-		Comment.objects.filter(uuid=c.uuid).update(isDeleted=True)
+		Comment.objects.filter(uuid=c.uuid).update(is_deleted=True)
 
-	def dehydrate(self, bundle):
-		del bundle.data['resource_uri']
-		return bundle
+	# def dehydrate(self, bundle):
+		# del bundle.data['resource_uri']
+		# return bundle
 
 class FollowResource(ModelResource):
 	follower = fields.ForeignKey(UserResource, 'follower')

@@ -92,3 +92,9 @@ def verify_access_token(key):
 
     logging.info('Valid access')
     return token
+
+class OAuth20AuthenticationOpinions(OAuth20Authentication):
+    def is_authenticated(self, request, **kwargs):
+        if request.method == 'GET':
+            return True
+        return super(OAuth20AuthenticationOpinions, self).is_authenticated(request, **kwargs)
