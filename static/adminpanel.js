@@ -123,5 +123,8 @@ function addClickProperties()
  		$.get('allApprove/', {flag: 0, 'news-id': $(this).attr("news-id")});
  		$(this).text('All Rejected!');
  	});
+ 	$('.news-title').on('click', function() {
+ 		$('body').scrollTop(0);
+ 	});
 }
 
