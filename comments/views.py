@@ -5,6 +5,7 @@ from django.http import HttpResponseRedirect, HttpResponse
 from django.template import RequestContext, loader, Context
 from comments.models import News, Comment, Vote, AllApproved
 from comments.models import EmailUser as User
+from comments.models import EmailUser
 from django.core.urlresolvers import resolve
 from django.contrib import auth
 from django.contrib.auth import login
