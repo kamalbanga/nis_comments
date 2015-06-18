@@ -1,8 +1,35 @@
 $( document ).ready(function() {
  	// inflateOpinions();
 
- 	$.getJSON('/loadAllNews/', function(data) {
- 		var list = data.pages;
+ 	var state = $('.active').text();
+ 	$('.btn-toggle').click(function() {
+ 		console.log('clicked toggle');
+ 		state = $('.active').text();
+ 		console.log('clicked: state = ' + state);
+ 		if (state == 'Categorized')
+ 			categorized();
+ 		else
+ 			inflateOpinions();
+ 	});
+ 	if (state == 'Categorized')
+ 		categorized();
+ 	else
+ 		inflateOpinions();
+ 	$('.btn-toggle').click(function() {
+ 		console.log('clicked toggle');
+ 		state = $('.active').text();
+ 		console.log('clicked: state = ' + state);
+ 		if (state == 'Categorized')
+ 			categorized();
+ 		else
+ 			inflateOpinions();
+ 	});
+ 	function categorized() {
+ 		console.log('in categorized');
+ 		$('.jumbotron').html('');
+ 		$('.col-sm-4').html('Loading News ...');
+ 		$.getJSON('/loadAllNews/', function(data) {
+ 			var list = data.pages;
  		// var news = "";
  		// news += '<div class=opinionsPerNews></div>'
  		var News = '<ul>';
@@ -24,11 +51,15 @@ $( document ).ready(function() {
  		});
 
  	});
+}
 
- });
+});
 
 function inflateOpinions()
 {
+	console.log('in inflateOpinions');
+	$('.col-sm-4').html('');
+	$('.col-sm-8').html('');
 	$.get("/api/v1/opinions/?is_approved=none",{},function(data){
 		inflateData(data);
 	}).fail(function(){
@@ -63,7 +94,7 @@ function inflateData(data)
 	for(var i = 0; i < opinions.length; i++)
 	{	
 		html += '<p>';
-		html += '<div class="news-title">' + opinions[i].news_slug + '</div>';
+		html += '<a class="news-title" href="' + 'http://newsinshorts.com/news/' + opinions[i].news_id + '">' + opinions[i].news_id + '</a>';
 		html += '<div class="opinion">' + opinions[i].text + '</div>';
 		html += '<button type="button" opinion-id="' + opinions[i].id + '" class="btn btn-primary approve">Approve</button>';
 		html += '<button type="button" opinion-id="' + opinions[i].id + '"  class="btn btn-danger reject">Reject</button>';
@@ -78,15 +109,19 @@ function addClickProperties()
 {
 	$(".approve").click(function(){
  		$.get('approve/', {flag: 1, id: $(this).attr("opinion-id")});
+ 		$(this).text('Approved!');
  	});
  	$(".reject").click(function(){
  		$.get('approve/', {flag: 0, id: $(this).attr("opinion-id")});
+ 		$(this).text('Rejected!');
  	});
  	$(".approve-all").click(function(){
  		$.get('allApprove/', {flag: 1, 'news-id': $(this).attr("news-id")});
+ 		$(this).text('All Approved!');
  	});
  	$(".reject-all").click(function(){
  		$.get('allApprove/', {flag: 0, 'news-id': $(this).attr("news-id")});
+ 		$(this).text('All Rejected!');
  	});
 }
 
