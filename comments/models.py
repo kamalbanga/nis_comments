@@ -1,5 +1,4 @@
 from django.db import models
-# from django.contrib.auth.models import User
 from django.contrib.auth.models import BaseUserManager, AbstractBaseUser, PermissionsMixin
 from django.utils import timezone
 import uuid
@@ -73,14 +72,6 @@ class AllApproved(models.Model):
             string = 'Rejected'
         return 'All ' + string + ' on ' + self.news_id
 
-class News(models.Model):
-    news_id = models.CharField(max_length=1000,null=True)
-    author = models.CharField(max_length=100, null=True)
-    text = models.CharField(max_length=1000, null=True)
-
-    def __unicode__(self):
-        return self.news_id
-
 class Comment(models.Model):
     uuid = models.CharField(max_length=40, default=uuid.uuid4)
     news_id = models.CharField(max_length=100, null=True)
@@ -101,16 +92,11 @@ class Comment(models.Model):
         unique_together = ('news_id', 'user')
 
 class Edit(models.Model):
-    # editid = models.CharField(max_length=40,default='random')
-    # edit_type = models.CharField(max_length=40,null=False)
-    # edit_subtype = models.CharField(max_length=40,null=False)
     cmt = models.ForeignKey(Comment)
-    # gen_id = models.CharField(max_length=40,null=False)
     old_text = models.CharField(max_length=1000,null=False)
     new_text = models.CharField(max_length=1000,null=False)
     edit_ts = models.DateTimeField(auto_now_add=True, blank=True, null=True)
- #todo:   edit_time = timestamp field
-    # userid = models.ForeignKey(User)
+    # userid = models.ForeignKey(User) # person who edited the opinion
 
 class Vote(models.Model):
     comment = models.ForeignKey(Comment, null=True, blank=True, default=None)

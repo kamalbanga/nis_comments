@@ -2,14 +2,12 @@ from django.conf.urls import include, url
 from comments.models import EmailUser as User
 from django.contrib import admin
 from tastypie.api import Api
-from comments.api import CommentResource, UserResource, NewsResource, CreateUserResource, FollowResource, VoteResource
+from comments.api import CommentResource, UserResource, FollowResource, VoteResource
 admin.autodiscover()
 
 v1_api = Api(api_name = 'v1')
 v1_api.register(UserResource())
-v1_api.register(NewsResource())
 v1_api.register(CommentResource())
-v1_api.register(CreateUserResource())
 v1_api.register(FollowResource())
 v1_api.register(VoteResource())
 

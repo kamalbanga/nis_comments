@@ -3,7 +3,7 @@ from .forms import EmailUserCreationForm as UserCreationForm
 from django.shortcuts import render
 from django.http import HttpResponseRedirect, HttpResponse
 from django.template import RequestContext, loader, Context
-from comments.models import News, Comment, Vote, AllApproved
+from comments.models import Comment, Vote, AllApproved
 from comments.models import EmailUser as User
 from comments.models import EmailUser
 from django.core.urlresolvers import resolve
@@ -14,7 +14,6 @@ from django.db import models, IntegrityError
 from provider import scope
 from provider.oauth2.views import AccessTokenView
 from provider.oauth2.models import Client
-# from django.contrib.auth.models import User as SU
 import json # for sending user data as json
 import requests # for GETing https://graph.facebook.com/me?access_token=...
 import uuid
@@ -22,24 +21,27 @@ import uuid
 def home(request):
     return render(request, 'home.html', {'news': News.objects.all()})
 
-# def news(request, url_arg):
-#     c = Comment.objects.all().filter(news__news_id=url_arg, is_deleted=False)
-#     n = News.objects.all().get(news_id=url_arg)
-#     dict = {'news': n.text, 'cts': c, 'news_id': n.news_id}
-#     return render(request, 'news.html', dict)
-
 def register_by_access_token(request, backend):
     token = request.GET.get('access_token')
     fb_response = requests.get('https://graph.facebook.com/me?access_token=' + token)
-    if fb_response.status_code != 200:
-        return HttpResponse("Invalid access token")
     data_json = fb_response.content
     data_dict = json.loads(data_json)
+    if fb_response.status_code != 200:
+        if data_dict['error']['code'] == 190 and data_dict['error']['error_subcode'] == 463:
+            return HttpResponse(status=400, reason='Facebook token expired')
+        else:
+            return HttpResponse("Invalid access token")
+    try:
+        e = data_dict['email']
+    except KeyError:
+        return HttpResponse(status=400, reason="Facebook access token doesn't have email permissions")
     user = EmailUser.objects.filter(email=data_dict['email'])
     if user.exists():
         user = user[0]
     else:
-        user = EmailUser(username=data_dict['name'], name=data_dict['name'], email=data_dict['email'], facebook_id = data_dict['id'], source = 'facebook')
+        user = EmailUser(username=data_dict['name'], name=data_dict['name'], 
+            email=data_dict['email'], facebook_id = data_dict['id'], 
+            source = 'facebook', image_url = 'https://graph.facebook.com/v2.3/' + data_dict['id'] + '/picture')
         user.save()
     cl = Client(user = user, name = 'opinion', client_type=1, url = 'http://opinion.elasticbeanstalk.com')
     cl.save()
@@ -49,14 +51,13 @@ def register_by_access_token(request, backend):
     user_data['name'] = user.name
     user_data['email'] = user.email
     print "facebook_id = ", user.facebook_id
-    user_data['image_url'] = 'https://graph.facebook.com/v2.3/' + user.facebook_id + '/picture?type=large'
+    user_data['image_url'] = 'https://graph.facebook.com/v2.3/' + user.facebook_id + '/picture'
     if user:
         return HttpResponse(json.dumps(user_data), content_type="application/json")
     else:
         return HttpResponse('ERROR')
 
 def admin_panel(request):
-    # print "in admin_panel: user = ", request.user
     opinions = Comment.objects.filter(is_approved=None).order_by('-created')
     dict = {'opinions': opinions}
     return render(request, 'admin_panel.html', dict)
@@ -89,7 +90,7 @@ def allApprove(request):
     except IntegrityError:
         return HttpResponse(status=409,reason='Duplicate entry for news_id: ' + news_id)
     return HttpResponse(status=201)
-    # Comment.objects.filter(news_id=news_id).update(all_approved=flag)
+    # Comment.objects.filter(news_id=news_id).update(all_approved=flag) # this won't work
 
 def loadAllNews(request):
     news = requests.post('http://crud.newsinshorts.com/app/loadAllNews')
