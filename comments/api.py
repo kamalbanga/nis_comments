@@ -19,6 +19,7 @@ class UserResource(ModelResource):
 		filtering = {
 			'username': ALL_WITH_RELATIONS,
 			'email': ALL_WITH_RELATIONS,
+			'id': ALL_WITH_RELATIONS,
 		}
 		authentication = OAuth20Authentication()
 

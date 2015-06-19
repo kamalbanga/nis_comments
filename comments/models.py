@@ -111,6 +111,9 @@ class Vote(models.Model):
             vote_type_str = '-1'
         return vote_type_str + " by " + self.user.email + " on " + self.Comment.text
 
+    class Meta:
+        unique_together = ('comment', 'user')
+
 class Follow(models.Model):
     follower = models.ForeignKey(EmailUser, related_name='follower', null=True, blank=True)
     followed = models.ForeignKey(EmailUser, related_name='followed', null=True, blank=True)
