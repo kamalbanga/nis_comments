@@ -146,9 +146,9 @@ class VoteResource(ModelResource):
 
 	def obj_create(self, bundle, **kwargs):
 		try:
-			c = Comment.objects.get(id=bundle.data['comment'])
+			c = Comment.objects.get(id=bundle.data['opinion'])
 		except KeyError:
-			raise NotFound("Field 'comment' not found")
+			raise NotFound("Field 'opinion' not found")
 		try:
 			current_vote_type = bundle.data['vote_type']
 		except KeyError:
