@@ -22,36 +22,57 @@ def home(request):
     return render(request, 'home.html', {'news': News.objects.all()})
 
 def register_by_access_token(request, backend):
+    if backend != 'facebook' and backend != 'google':
+        return HttpResponse(status=400, reason='Backend ' + backend + ' not supported')
     token = request.GET.get('access_token')
-    fb_response = requests.get('https://graph.facebook.com/me?access_token=' + token)
-    data_json = fb_response.content
+    print 'token = ', token
+    if backend == 'facebook':
+        response = requests.get('https://graph.facebook.com/me?access_token=' + token)
+    elif backend == 'google':
+        response = requests.get('https://www.googleapis.com/oauth2/v1/userinfo?alt=json&access_token=' + token)
+    data_json = response.content
     data_dict = json.loads(data_json)
-    if fb_response.status_code != 200:
-        if data_dict['error']['code'] == 190 and data_dict['error']['error_subcode'] == 463:
-            return HttpResponse(status=400, reason='Facebook token expired')
-        else:
-            return HttpResponse("Invalid access token")
-    try:
-        e = data_dict['email']
-    except KeyError:
-        return HttpResponse(status=400, reason="Facebook access token doesn't have email permissions")
-    user = EmailUser.objects.filter(email=data_dict['email'])
+    print 'data_dict = ', data_dict
+    if response.status_code != 200:
+        # if data_dict['error']['code'] == 190 and data_dict['error']['error_subcode'] == 463:
+        #     return HttpResponse(status=400, reason='Facebook token expired')
+        # else:
+        return HttpResponse("Invalid access token")
+    # try:
+    #     e = data_dict['email']
+    # except KeyError:
+    #     return HttpResponse(status=400, reason="Facebook access token doesn't have email permissions")
+    if backend == 'facebook':
+        user = EmailUser.objects.filter(source=backend, facebook_id=data_dict['id'])
+    elif backend == 'google':
+        user = EmailUser.objects.filter(source=backend, google_id=data_dict['id'])
     if user.exists():
         user = user[0]
     else:
-        user = EmailUser(username=data_dict['name'], name=data_dict['name'], 
-            email=data_dict['email'], facebook_id = data_dict['id'], 
-            source = 'facebook', image_url = 'https://graph.facebook.com/v2.3/' + data_dict['id'] + '/picture')
+        if 'email' in data_dict:
+            email = data_dict['email']
+        else:
+            email = None
+        user = EmailUser(name=data_dict['name'],
+            email=email, source = backend)
+        if backend == 'facebook':
+            user.image_url = 'https://graph.facebook.com/v2.3/' + data_dict['id'] + '/picture'
+            user.facebook_id = data_dict['id']
+        elif backend == 'google':
+            user.image_url = data_dict['picture']
+            user.google_id = data_dict['id']
         user.save()
     cl = Client(user = user, name = 'opinion', client_type=1, url = 'http://opinion.elasticbeanstalk.com')
     cl.save()
+    print 'user = ', user.email, ' ', user.name, ' ', user.facebook_id, ' ', user.google_id, ' ', user.image_url
     at = AccessTokenView().get_access_token(request, user, scope.to_int('read', 'write'), cl)
     user_data = {'token': at.token}
     user_data['id'] = user.id
     user_data['name'] = user.name
     user_data['email'] = user.email
     print "facebook_id = ", user.facebook_id
-    user_data['image_url'] = 'https://graph.facebook.com/v2.3/' + user.facebook_id + '/picture'
+    user_data['image_url'] = user.image_url
+    print "Serialize Issue: user_data = ", user_data
     if user:
         return HttpResponse(json.dumps(user_data), content_type="application/json")
     else:

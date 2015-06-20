@@ -47,7 +47,7 @@ INSTALLED_APPS = (
     'django.contrib.staticfiles',
     'tastypie',
     'provider',
-    # 'provider.oauth2',
+    'provider.oauth2',
     'comments',
 )
 

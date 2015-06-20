@@ -23,13 +23,18 @@ class EmailUserManager(BaseUserManager):
     def create_superuser(self, email, password, **extra_fields):
         return self._create_user(email, password, True, True, **extra_fields)
 
+def unique_id():
+    return str(uuid.uuid4())
+
 class AbstractEmailUser(AbstractBaseUser, PermissionsMixin):
-    email = models.EmailField('email address', max_length=255, unique=True, db_index=True)
+    email = models.EmailField('email address', max_length=255, null=True)
     username = models.CharField(max_length=100, null=True)
     name = models.CharField(max_length=100, null=True)
     image_url = models.URLField(null=True)
-    source = models.CharField(max_length=20, null=True) # facebook, nis ...
-    facebook_id = models.CharField(max_length=40, null=True) # facebook profile id
+    source = models.CharField(max_length=20, null=True) # facebook, google, nis ...
+    id = models.CharField(max_length=40, primary_key=True, default=unique_id)
+    facebook_id = models.CharField(max_length=40, null=True)
+    google_id = models.CharField(max_length=40, null=True)
     is_staff = models.BooleanField('staff status', default=False, help_text=
         'Designates whether the use can log into this admin site.')
     is_active = models.BooleanField('active', default=True, help_text='Designates whether this user should be treated as '
@@ -39,7 +44,7 @@ class AbstractEmailUser(AbstractBaseUser, PermissionsMixin):
     followed_count = models.PositiveIntegerField(default=0) # no. of people following this stud
 
     objects = EmailUserManager()
-    USERNAME_FIELD = 'email'
+    USERNAME_FIELD = 'id'
     REQUIRED_FIELDS = []
 
     class Meta:
@@ -48,10 +53,10 @@ class AbstractEmailUser(AbstractBaseUser, PermissionsMixin):
         abstract = True
 
     def get_full_name(self):
-        return self.email
+        return self.name
 
     def get_short_name(self):
-        return self.email
+        return self.username
 
     def email_user(self, subject, message, from_email=None, **kwargs):
         send_mail(subject, message, from_email, [self.email], **kwargs)

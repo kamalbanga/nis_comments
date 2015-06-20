@@ -2,7 +2,7 @@ from tastypie.resources import ModelResource, ALL, ALL_WITH_RELATIONS
 from tastypie.constants import ALL
 from tastypie import fields, http
 from models import *
-from tastypie.authentication import Authentication, BasicAuthentication, ApiKeyAuthentication
+from tastypie.authentication import Authentication, BasicAuthentication
 from tastypie.authorization import Authorization, DjangoAuthorization
 from comments.models import EmailUser as User
 from authenticate import OAuth20Authentication, OAuth20AuthenticationOpinions

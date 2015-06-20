@@ -5,6 +5,7 @@ from django.db import models, migrations
 import django.utils.timezone
 from django.conf import settings
 import uuid
+import comments.models
 
 
 class Migration(migrations.Migration):
@@ -17,13 +18,17 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name='EmailUser',
             fields=[
-                ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
                 ('password', models.CharField(max_length=128, verbose_name='password')),
                 ('last_login', models.DateTimeField(default=django.utils.timezone.now, verbose_name='last login')),
                 ('is_superuser', models.BooleanField(default=False, help_text='Designates that this user has all permissions without explicitly assigning them.', verbose_name='superuser status')),
-                ('email', models.EmailField(unique=True, max_length=255, verbose_name=b'email address', db_index=True)),
+                ('email', models.EmailField(max_length=255, null=True, verbose_name=b'email address')),
+                ('username', models.CharField(max_length=100, null=True)),
                 ('name', models.CharField(max_length=100, null=True)),
                 ('image_url', models.URLField(null=True)),
+                ('source', models.CharField(max_length=20, null=True)),
+                ('id', models.CharField(default=comments.models.unique_id, max_length=40, serialize=False, primary_key=True)),
+                ('facebook_id', models.CharField(max_length=40, null=True)),
+                ('google_id', models.CharField(max_length=40, null=True)),
                 ('is_staff', models.BooleanField(default=False, help_text=b'Designates whether the use can log into this admin site.', verbose_name=b'staff status')),
                 ('is_active', models.BooleanField(default=True, help_text=b'Designates whether this user should be treated as active. Unselect this instead of deleting accounts.', verbose_name=b'active')),
                 ('date_joined', models.DateTimeField(default=django.utils.timezone.now, verbose_name=b'date joined')),
@@ -41,17 +46,29 @@ class Migration(migrations.Migration):
             bases=(models.Model,),
         ),
         migrations.CreateModel(
+            name='AllApproved',
+            fields=[
+                ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
+                ('news_id', models.CharField(max_length=200, unique=True, null=True)),
+                ('all_approved', models.BooleanField()),
+            ],
+            options={
+            },
+            bases=(models.Model,),
+        ),
+        migrations.CreateModel(
             name='Comment',
             fields=[
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
                 ('uuid', models.CharField(default=uuid.uuid4, max_length=40)),
-                ('news_slug', models.CharField(max_length=100, null=True)),
+                ('news_id', models.CharField(max_length=100, null=True)),
                 ('text', models.CharField(max_length=300, null=True)),
                 ('upvotes', models.PositiveIntegerField(default=0)),
                 ('downvotes', models.PositiveIntegerField(default=0)),
-                ('isDeleted', models.BooleanField(default=False)),
+                ('is_deleted', models.BooleanField(default=False)),
                 ('created', models.DateTimeField(auto_now_add=True, null=True)),
                 ('last_edit', models.DateTimeField(auto_now=True, null=True)),
+                ('is_approved', models.NullBooleanField()),
                 ('user', models.ForeignKey(to=settings.AUTH_USER_MODEL)),
             ],
             options={
@@ -83,18 +100,6 @@ class Migration(migrations.Migration):
             bases=(models.Model,),
         ),
         migrations.CreateModel(
-            name='News',
-            fields=[
-                ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
-                ('news_id', models.CharField(max_length=1000, null=True)),
-                ('author', models.CharField(max_length=100, null=True)),
-                ('text', models.CharField(max_length=1000, null=True)),
-            ],
-            options={
-            },
-            bases=(models.Model,),
-        ),
-        migrations.CreateModel(
             name='Vote',
             fields=[
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
@@ -107,6 +112,10 @@ class Migration(migrations.Migration):
             },
             bases=(models.Model,),
         ),
+        migrations.AlterUniqueTogether(
+            name='vote',
+            unique_together=set([('comment', 'user')]),
+        ),
         migrations.AddField(
             model_name='comment',
             name='votes',
@@ -115,6 +124,6 @@ class Migration(migrations.Migration):
         ),
         migrations.AlterUniqueTogether(
             name='comment',
-            unique_together=set([('news_slug', 'user')]),
+            unique_together=set([('news_id', 'user')]),
         ),
     ]
