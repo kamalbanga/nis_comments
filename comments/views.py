@@ -21,6 +21,10 @@ import uuid
 def home(request):
     return render(request, 'home.html', {'news': News.objects.all()})
 
+def loaderio(request):
+    content = 'loaderio-5b4540e24d0a6151b10967817c468dc1'
+    return HttpResponse(content, content_type='text/plain')
+
 def register_by_access_token(request, backend):
     if backend != 'facebook' and backend != 'google':
         return HttpResponse(status=400, reason='Backend ' + backend + ' not supported')
@@ -192,8 +196,8 @@ def login_view(request):
     else:
         return HttpResponse('Oops. Wrong password')
 
-def loaderio(request):
-    return HttpResponse(open('/Users/kamal/code/django/nis_comments/loaderio-60e1acefed2821f0dd26089f4126ca85.txt').read(), content_type='text/plain')
+# def loaderio(request):
+#     return HttpResponse(open('/Users/kamal/code/django/nis_comments/loaderio-60e1acefed2821f0dd26089f4126ca85.txt').read(), content_type='text/plain')
 
 @login_required
 def loggedin(request):
