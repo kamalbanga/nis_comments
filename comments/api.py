@@ -10,6 +10,7 @@ from django.db import models, IntegrityError
 from tastypie.exceptions import *
 from provider.oauth2.models import Client
 from django.core.cache import cache
+from tastypie.cache import SimpleCache
 
 class UserResource(ModelResource):
 	class Meta:
@@ -35,6 +36,7 @@ class CommentResource(ModelResource):
 		queryset = Comment.objects.filter(is_deleted=False)
 		resource_name = 'opinions'
 		always_return_data = True
+		cache = SimpleCache(timeout=100)
 		authorization = Authorization() # permission to POST
 		fields = ['text', 'upvotes', 'downvotes', 'resource_uri', 'user', 'created', 'last_edit', 'news_id', 'id', 'is_approved', 'is_deleted']
 		filtering = {
