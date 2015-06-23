@@ -9,6 +9,7 @@ from authenticate import OAuth20Authentication, OAuth20AuthenticationOpinions
 from django.db import models, IntegrityError
 from tastypie.exceptions import *
 from provider.oauth2.models import Client
+from django.core.cache import cache
 
 class UserResource(ModelResource):
 	class Meta:
@@ -46,7 +47,13 @@ class CommentResource(ModelResource):
 		authentication = OAuth20AuthenticationOpinions() # this doesn't need authentication on GET reqeusts
 
 	def get_object_list(self, request):
+		cached_opinions = cache.get('opinions')
+		if cached_opinions is not None:
+			print 'got opinions in cache'
+			return cached_opinions
+		print "didn't get opinions in cache"
 		opinions = super(CommentResource, self).get_object_list(request).order_by('-created')
+		cache.set('opinions', opinions, 100)
 		return opinions
 
 	def obj_update(self, bundle, **kwargs):
@@ -90,9 +97,9 @@ class CommentResource(ModelResource):
 		c = self.obj_get(bundle, **kwargs)
 		Comment.objects.filter(uuid=c.uuid).update(is_deleted=True)
 
-	def dehydrate(self, bundle):
-		del bundle.data['resource_uri']
-		return bundle
+	# def dehydrate(self, bundle):
+	# 	del bundle.data['resource_uri']
+	# 	return bundle
 
 class FollowResource(ModelResource):
 	follower = fields.ForeignKey(UserResource, 'follower')
