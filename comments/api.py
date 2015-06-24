@@ -11,6 +11,7 @@ from tastypie.exceptions import *
 from provider.oauth2.models import Client
 from django.core.cache import cache
 from tastypie.cache import SimpleCache
+from silk.profiling.dynamic import *
 
 class UserResource(ModelResource):
 	class Meta:
@@ -47,7 +48,7 @@ class CommentResource(ModelResource):
 			'is_deleted': ALL_WITH_RELATIONS,
 		}
 		authentication = OAuth20AuthenticationOpinions() # this doesn't need authentication on GET reqeusts
-
+	@silk_profile()
 	def get_object_list(self, request):
 		cached_opinions = cache.get('opinions')
 		if cached_opinions is not None:
@@ -99,9 +100,10 @@ class CommentResource(ModelResource):
 		c = self.obj_get(bundle, **kwargs)
 		Comment.objects.filter(uuid=c.uuid).update(is_deleted=True)
 
-	# def dehydrate(self, bundle):
-	# 	del bundle.data['resource_uri']
-	# 	return bundle
+	@silk_profile()
+	def dehydrate(self, bundle):
+		del bundle.data['resource_uri']
+		return bundle
 
 class FollowResource(ModelResource):
 	follower = fields.ForeignKey(UserResource, 'follower')

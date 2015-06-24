@@ -4,3 +4,4 @@ django-tastypie==0.12.1
 shortuuid>=0.3
 requests==2.6.2
 python-memcached==1.54
+django-silk==0.5.5

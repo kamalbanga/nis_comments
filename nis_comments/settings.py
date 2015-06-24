@@ -49,11 +49,13 @@ INSTALLED_APPS = (
     'provider',
     'provider.oauth2',
     'comments',
+    'silk',
 )
 
 AUTH_USER_MODEL = 'comments.EmailUser'
 SOCIAL_AUTH_USER_MODEL = 'comments.EmailUser'
 SOCIAL_AUTH_USERNAME_IS_FULL_EMAIL = True
+SILKY_PYTHON_PROFILER = True
 
 TEMPLATES = [
     {
@@ -114,6 +116,7 @@ MIDDLEWARE_CLASSES = (
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
+    'silk.middleware.SilkyMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.auth.middleware.SessionAuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',

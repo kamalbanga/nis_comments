@@ -23,6 +23,7 @@ urlpatterns = [
     url(r'^admin-panel2/approve/$', 'comments.views.approve'),
     url(r'^admin-panel/allApprove/$', 'comments.views.allApprove'),
     url(r'^loadAllNews/$', 'comments.views.loadAllNews'),
+    url(r'^silk/', include('silk.urls', namespace='silk')),
     url(r'^home/$', 'comments.sample_view.home'),
     url(r'^logout/$', 'comments.sample_view.logout'),
     url(r'^api/', include(v1_api.urls)),
