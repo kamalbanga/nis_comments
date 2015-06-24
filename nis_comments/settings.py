@@ -73,7 +73,8 @@ TEMPLATES = [
 
 CACHES = {
     'default': {
-        'BACKEND': 'django.core.cache.backends.locmem.LocMemCache',
+        'BACKEND': 'django.core.cache.backends.memcached.MemcachedCache',
+        'LOCATION': 'memc.mho1a3.cfg.use1.cache.amazonaws.com:11211',
     }
 }
 

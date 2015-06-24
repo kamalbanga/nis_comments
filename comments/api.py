@@ -140,7 +140,7 @@ class VoteResource(ModelResource):
 	class Meta:
 		queryset = Vote.objects.all()
 		authorization = Authorization()
-		authentication = OAuth20Authentication()
+		# authentication = OAuth20Authentication()
 		resource_name = 'votes'
 		fields = ['user', 'comment', 'vote_type', 'id']
 		filtering = {
@@ -148,7 +148,14 @@ class VoteResource(ModelResource):
 			'comment': ALL_WITH_RELATIONS,
 		}
 
+	def get_object_list(self, request):
+		cache.set('votes', Vote.objects.all())
+		# return Vote.objects.all()
+		print 'votes = ', cache.get('votes')
+		return cache.get('votes')
+
 	def dehydrate(self, bundle):
+		print 'votes = ', cache.get('votes')
 		bundle.data['comment'] = bundle.obj.comment.id
 		bundle.data['user'] = bundle.obj.user.id
 		del bundle.data['resource_uri']
