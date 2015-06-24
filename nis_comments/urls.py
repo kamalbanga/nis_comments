@@ -13,6 +13,7 @@ v1_api.register(VoteResource())
 
 urlpatterns = [
     url(r'^opinions/$', 'comments.views.get_opinions'),
+    url(r'^opinions_without_cache/$', 'comments.views.get_opinions_without_cache'),
     url(r'^loaderio-5b4540e24d0a6151b10967817c468dc1/$', 'comments.views.loaderio'),
     url(r'^register-by-token/(?P<backend>[^/]+)/$', 'comments.views.register_by_access_token'),
     url(r'^api/v1/register-by-token/(?P<backend>[^/]+)/$', 'comments.views.register_by_access_token'),

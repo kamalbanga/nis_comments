@@ -35,6 +35,9 @@ def get_opinions(request):
     cache.set('opinions', opinions, 100)
     return HttpResponse(opinions, content_type='text/plain')
 
+def get_opinions_without_cache(request):
+    return HttpResponse(Comment.objects.all(), content_type='text/plain')
+
 def register_by_access_token(request, backend):
     if backend != 'facebook' and backend != 'google':
         return HttpResponse(status=400, reason='Backend ' + backend + ' not supported')
