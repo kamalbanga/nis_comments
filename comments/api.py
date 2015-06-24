@@ -48,6 +48,7 @@ class CommentResource(ModelResource):
 			'is_deleted': ALL_WITH_RELATIONS,
 		}
 		authentication = OAuth20AuthenticationOpinions() # this doesn't need authentication on GET reqeusts
+
 	@silk_profile()
 	def get_object_list(self, request):
 		cached_opinions = cache.get('opinions')
@@ -55,7 +56,7 @@ class CommentResource(ModelResource):
 			# print 'got opinions in cache'
 			return cached_opinions
 		print "didn't get opinions in cache"
-		opinions = super(CommentResource, self).get_object_list(request).order_by('-created')
+		opinions = super(CommentResource, self).get_object_list(request)#.order_by('-created')
 		cache.set('opinions', opinions, 100)
 		return opinions
 
