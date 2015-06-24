@@ -114,7 +114,7 @@ class Vote(models.Model):
             vote_type_str = '+1'
         else:
             vote_type_str = '-1'
-        return vote_type_str + " by " + self.user.email + " on " + self.Comment.text
+        return vote_type_str + " on " + self.Comment.text
 
     class Meta:
         unique_together = ('comment', 'user')
