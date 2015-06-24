@@ -17,6 +17,7 @@ from provider.oauth2.models import Client
 import json # for sending user data as json
 import requests # for GETing https://graph.facebook.com/me?access_token=...
 import uuid
+from django.core.cache import cache
 
 def home(request):
     return render(request, 'home.html', {'news': News.objects.all()})
@@ -24,6 +25,15 @@ def home(request):
 def loaderio(request):
     content = 'loaderio-5b4540e24d0a6151b10967817c468dc1'
     return HttpResponse(content, content_type='text/plain')
+
+def get_opinions(request):
+    cached_opinions = cache.get('opinions')
+    if cached_opinions is not None:
+        return HttpResponse(cached_opinions, content_type='application/json')
+    print "in get_opinions; didn't get opinions in cache"
+    opinions = Comment.objects.all()
+    cache.set('opinions', opinions, 100)
+    return HttpResponse(opinions, content_type='text/plain')
 
 def register_by_access_token(request, backend):
     if backend != 'facebook' and backend != 'google':
