@@ -15,7 +15,7 @@ import os
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
-API_LIMIT_PER_PAGE = 30
+API_LIMIT_PER_PAGE = 10
 TASTYPIE_FULL_DEBUG = True
 TASTYPIE_DEFAULT_FORMATS = ['json']
 
