@@ -51,13 +51,13 @@ class CommentResource(ModelResource):
 
 	@silk_profile()
 	def get_object_list(self, request):
-		cached_opinions = cache.get('opinions')
-		if cached_opinions is not None:
-			# print 'got opinions in cache'
-			return cached_opinions
-		print "didn't get opinions in cache"
+		# cached_opinions = cache.get('opinions')
+		# if cached_opinions is not None:
+		# 	# print 'got opinions in cache'
+		# 	return cached_opinions
+		# print "didn't get opinions in cache"
 		opinions = super(CommentResource, self).get_object_list(request)#.order_by('-created')
-		cache.set('opinions', opinions, 100)
+		# cache.set('opinions', opinions, 100)
 		return opinions
 
 	def obj_update(self, bundle, **kwargs):
