@@ -72,6 +72,7 @@ class CommentResource(ModelResource):
 		cmt = Comment.objects.get(id=kwargs['pk'])
 		cmt.text = new_text
 		cmt.save()
+		bundle.obj = cmt
 		Edit(cmt=cmt, old_text = old_text, new_text = new_text).save()
 		return bundle
 
