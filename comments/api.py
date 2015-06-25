@@ -69,7 +69,7 @@ class CommentResource(ModelResource):
 			new_text = bundle.data['text']
 		except KeyError:
 			raise NotFound("Field 'text' not found")
-		cmt = Comment.objects.get(uuid=bundle.data['uuid'])
+		cmt = Comment.objects.get(id=kwargs['pk'])
 		cmt.text = new_text
 		cmt.save()
 		Edit(cmt=cmt, old_text = old_text, new_text = new_text).save()
