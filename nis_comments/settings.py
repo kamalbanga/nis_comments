@@ -29,6 +29,13 @@ SECRET_KEY = 'wmlgfm!)ahsj%1_pad#l808!9vksmwetfv96ipaw1z5@!3d$hb'
 DEBUG = True
 # APPEND_SLASH=False
 
+def show_toolbar(request):
+    return True
+
+DEBUG_TOOLBAR_CONFIG = {
+    'SHOW_TOOLBAR_CALLBACK': 'nis_comments.settings.show_toolbar',
+}
+
 ALLOWED_HOSTS = []
 
 TEMPLATE_DIRS = (
@@ -50,6 +57,7 @@ INSTALLED_APPS = (
     'provider.oauth2',
     'comments',
     'silk',
+    'debug_toolbar',
 )
 
 AUTH_USER_MODEL = 'comments.EmailUser'
@@ -117,6 +125,7 @@ MIDDLEWARE_CLASSES = (
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'silk.middleware.SilkyMiddleware',
+    'debug_toolbar.middleware.DebugToolbarMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.auth.middleware.SessionAuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
