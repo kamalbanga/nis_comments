@@ -20,6 +20,9 @@ import uuid
 from django.core.cache import cache
 from silk.profiling.dynamic import *
 
+def hi(request):
+    return HttpResponse('hi', content_type='text/plain')
+
 def home(request):
     return render(request, 'home.html', {'news': News.objects.all()})
 
