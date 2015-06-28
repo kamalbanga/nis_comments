@@ -18,6 +18,7 @@ urlpatterns = [
     url(r'^opinions_without_cache/$', 'comments.views.get_opinions_without_cache'),
     url(r'^loaderio-5b4540e24d0a6151b10967817c468dc1/$', 'comments.views.loaderio'),
     url(r'^loaderio-7caad16f2def076a5d46aaf87651efd1/$', 'comments.views.loaderio2'),
+    url(r'^loaderio-5fa909c94db66f8c75cdcf5c57fc3672/$', 'comments.views.loaderio3'),
     url(r'^register-by-token/(?P<backend>[^/]+)/$', 'comments.views.register_by_access_token'),
     url(r'^api/v1/register-by-token/(?P<backend>[^/]+)/$', 'comments.views.register_by_access_token'),
     url(r'^admin-panel/$', 'comments.views.admin_panel'),

@@ -31,6 +31,10 @@ def loaderio2(request):
     content = 'loaderio-7caad16f2def076a5d46aaf87651efd1'
     return HttpResponse(content, content_type='text/plain')
 
+def loaderio3(request):
+    content = 'loaderio-5fa909c94db66f8c75cdcf5c57fc3672'
+    return HttpResponse(content, content_type='text/plain')
+
 @silk_profile()
 def get_opinions(request):
     cached_opinions = cache.get('opinions')
