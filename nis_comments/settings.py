@@ -57,6 +57,7 @@ INSTALLED_APPS = (
     'provider.oauth2',
     'comments',
     'silk',
+    'yet_another_django_profiler',
     'debug_toolbar',
 )
 
@@ -125,6 +126,7 @@ MIDDLEWARE_CLASSES = (
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'silk.middleware.SilkyMiddleware',
+    'yet_another_django_profiler.middleware.ProfilerMiddleware',
     'debug_toolbar.middleware.DebugToolbarMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.auth.middleware.SessionAuthenticationMiddleware',
