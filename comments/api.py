@@ -82,6 +82,8 @@ class CommentResource(ModelResource):
 			text = bundle.data['text']
 		except KeyError:
 			raise NotFound("The field 'text' of the opinion is needed for opinion creation")
+		if Comment.objects.filter(news_id=news_id, user=user, is_deleted=False).exists():
+			raise ImmediateHttpResponse(response=http.HttpBadRequest())
 		c = Comment(user=user, news_id=news_id, text=text)
 		all_approved_obj = AllApproved.objects.filter(news_id=news_id)
 		if all_approved_obj.exists():

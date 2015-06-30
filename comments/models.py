@@ -93,8 +93,8 @@ class Comment(models.Model):
     def __unicode__(self):
         return self.text
 
-    class Meta:
-        unique_together = ('news_id', 'user')
+    # class Meta:
+    #     unique_together = ('news_id', 'user')
 
 class Edit(models.Model):
     cmt = models.ForeignKey(Comment)
