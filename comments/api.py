@@ -144,7 +144,7 @@ class VoteResource(ModelResource):
 	class Meta:
 		queryset = Vote.objects.all()
 		authorization = Authorization()
-		# authentication = OAuth20Authentication()
+		authentication = OAuth20Authentication()
 		resource_name = 'votes'
 		fields = ['user', 'comment', 'vote_type', 'id']
 		filtering = {
