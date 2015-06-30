@@ -95,6 +95,8 @@ def verify_access_token(key):
 
 class OAuth20AuthenticationOpinions(OAuth20Authentication):
     def is_authenticated(self, request, **kwargs):
-        if request.method == 'GET':
+        auth_header_value = request.META.get('HTTP_AUTHORIZATION')
+        if request.method == 'GET' and auth_header_value is None:
+            request.user = AnonymousUser()
             return True
         return super(OAuth20AuthenticationOpinions, self).is_authenticated(request, **kwargs)

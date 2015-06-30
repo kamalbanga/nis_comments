@@ -53,11 +53,7 @@ class CommentResource(ModelResource):
 
 	@silk_profile()
 	def get_object_list(self, request):
-		# cached_opinions = cache.get('opinions')
-		# if cached_opinions is not None:
-		# 	return cached_opinions
-		opinions = super(CommentResource, self).get_object_list(request)#.order_by('-created')
-		# cache.set('opinions', opinions, 100)
+		opinions = super(CommentResource, self).get_object_list(request).order_by('-created')
 		return opinions
 
 	def obj_update(self, bundle, **kwargs):
@@ -106,6 +102,14 @@ class CommentResource(ModelResource):
 		del bundle.data['resource_uri']
 		bundle.data['created'] = bundle.data['created'].strftime('%s')
 		bundle.data['last_edit'] = bundle.data['last_edit'].strftime('%s')
+		if bundle.request.user.is_authenticated():
+			votes = Vote.objects.filter(user=bundle.request.user).filter(comment=bundle.obj)
+			if len(votes) > 0:
+				vote = Vote.objects.filter(user=bundle.request.user).get(comment=bundle.obj)
+				vote_type = vote.vote_type
+			else:
+				vote_type = 0
+			bundle.data['vote'] = vote_type
 		return bundle
 
 class FollowResource(ModelResource):
