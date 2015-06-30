@@ -12,6 +12,7 @@ from provider.oauth2.models import Client
 from django.core.cache import cache
 from tastypie.cache import SimpleCache
 from silk.profiling.dynamic import *
+from datetime import datetime
 
 class UserResource(ModelResource):
 	class Meta:
@@ -28,6 +29,7 @@ class UserResource(ModelResource):
 
 	def dehydrate(self, bundle):
 		del bundle.data['resource_uri']
+		bundle.data['date_joined'] = bundle.data['date_joined'].strftime('%s')
 		return bundle
 
 class CommentResource(ModelResource):
@@ -37,7 +39,7 @@ class CommentResource(ModelResource):
 		queryset = Comment.objects.filter(is_deleted=False)
 		resource_name = 'opinions'
 		always_return_data = True
-		cache = SimpleCache(timeout=100)
+		# cache = SimpleCache(timeout=100)
 		authorization = Authorization() # permission to POST
 		fields = ['text', 'upvotes', 'downvotes', 'resource_uri', 'user', 'created', 'last_edit', 'news_id', 'id', 'is_approved', 'is_deleted']
 		filtering = {
@@ -53,9 +55,7 @@ class CommentResource(ModelResource):
 	def get_object_list(self, request):
 		# cached_opinions = cache.get('opinions')
 		# if cached_opinions is not None:
-		# 	# print 'got opinions in cache'
 		# 	return cached_opinions
-		# print "didn't get opinions in cache"
 		opinions = super(CommentResource, self).get_object_list(request)#.order_by('-created')
 		# cache.set('opinions', opinions, 100)
 		return opinions
@@ -86,7 +86,6 @@ class CommentResource(ModelResource):
 			text = bundle.data['text']
 		except KeyError:
 			raise NotFound("The field 'text' of the opinion is needed for opinion creation")
-		print "news_id = ", news_id, "text = ", text
 		c = Comment(user=user, news_id=news_id, text=text)
 		all_approved_obj = AllApproved.objects.filter(news_id=news_id)
 		if all_approved_obj.exists():
@@ -105,6 +104,8 @@ class CommentResource(ModelResource):
 	@silk_profile()
 	def dehydrate(self, bundle):
 		del bundle.data['resource_uri']
+		bundle.data['created'] = bundle.data['created'].strftime('%s')
+		bundle.data['last_edit'] = bundle.data['last_edit'].strftime('%s')
 		return bundle
 
 class FollowResource(ModelResource):
@@ -153,15 +154,14 @@ class VoteResource(ModelResource):
 		}
 
 	def get_object_list(self, request):
-		cache.set('votes', Vote.objects.all())
-		# return Vote.objects.all()
-		print 'votes = ', cache.get('votes')
-		return cache.get('votes')
+		# cache.set('votes', Vote.objects.all())
+		return Vote.objects.all()
+		# return cache.get('votes')
 
 	def dehydrate(self, bundle):
-		print 'votes = ', cache.get('votes')
 		bundle.data['comment'] = bundle.obj.comment.id
 		bundle.data['user'] = bundle.obj.user.id
+		# bundle.data['ts'] = bundle.data['ts'].strftime('%s')
 		del bundle.data['resource_uri']
 		return bundle
 
