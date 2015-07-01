@@ -120,17 +120,21 @@ class FollowResource(ModelResource):
 	follower = fields.ForeignKey(UserResource, 'follower')
 	followed = fields.ForeignKey(UserResource, 'followed')
 
+	class Meta:
+		queryset = Follow.objects.all()
+		resource_name = 'follow'
+		authorization = Authorization()
+		authentication = OAuth20Authentication()
+
 	def obj_create(self, bundle, **kwargs):
-		try:
-			follower_id = bundle.data['follower']
-		except KeyError:
-			raise NotFound("Field 'follower' not found")
 		try:
 			followed_id = bundle.data['followed']
 		except KeyError:
 			raise NotFound("Field 'followed' not found")
-		follower = User.objects.get(id=follower_id)
+		follower = bundle.request.user
 		followed = User.objects.get(id=followed_id)
+		if follower == followed:
+			raise ImmediateHttpResponse(response=http.HttpForbidden("A user can't follow himself"))
 		f = Follow(follower=follower, followed=followed)
 		follower.follow_count = follower.follow_count + 1
 		followed.followed_count = followed.followed_count + 1
@@ -140,11 +144,11 @@ class FollowResource(ModelResource):
 		bundle.obj = f
 		return bundle
 
-	class Meta:
-		queryset = Follow.objects.all()
-		resource_name = 'follow'
-		always_return_data = True
-		authorization = Authorization()
+	def dehydrate(self, bundle):
+		del bundle.data['resource_uri']
+		bundle.data['followed'] = bundle.obj.followed.id
+		bundle.data['follower'] = bundle.obj.follower.id
+		return bundle
 
 class VoteResource(ModelResource):
 	user = fields.ForeignKey(UserResource, 'user')
