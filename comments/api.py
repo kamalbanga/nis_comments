@@ -83,16 +83,24 @@ class CommentResource(ModelResource):
 			text = bundle.data['text']
 		except KeyError:
 			raise NotFound("The field 'text' of the opinion is needed for opinion creation")
-		if Comment.objects.filter(news_id=news_id, user=user, is_deleted=False).exists():
-			raise ImmediateHttpResponse(response=http.HttpBadRequest())
-		c = Comment(user=user, news_id=news_id, text=text)
+		if Comment.objects.filter(news_id=news_id, user=user, is_deleted=True).exists():
+			c = Comment.objects.get(news_id=news_id, user=user)
+			old_text = c.text
+			c.text = text
+			c.is_deleted = False
+			Edit(cmt=c, old_text=old_text, new_text=text).save()
+			# return bundle
+			# print 'multiple opinions ...'
+			# raise ImmediateHttpResponse(response=http.HttpBadRequest("A User can post only one opinion"))
+		else:
+			c = Comment(user=user, news_id=news_id, text=text)
 		all_approved_obj = AllApproved.objects.filter(news_id=news_id)
 		if all_approved_obj.exists():
 			c.is_approved = all_approved_obj[0].all_approved
 		try:
 			c.save()
 		except IntegrityError:
-			raise ImmediateHttpResponse(response=http.HttpForbidden())
+			raise ImmediateHttpResponse(response=http.HttpForbidden("A user can post only one opinion"))
 		bundle.obj = c
 		return bundle
 
