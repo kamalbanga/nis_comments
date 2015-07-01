@@ -18,7 +18,8 @@ class UserResource(ModelResource):
 	class Meta:
 		queryset = User.objects.all()
 		resource_name = 'users'
-		excludes = ['password', 'is_active', 'is_staff', 'is_superuser', 'source']
+		fields = ['id', 'name', 'image_url']
+		# excludes = ['password', 'is_active', 'is_staff', 'is_superuser', 'source']
 		allowed_methods = ['get']
 		filtering = {
 			'username': ALL_WITH_RELATIONS,
@@ -29,7 +30,7 @@ class UserResource(ModelResource):
 
 	def dehydrate(self, bundle):
 		del bundle.data['resource_uri']
-		bundle.data['date_joined'] = bundle.data['date_joined'].strftime('%s')
+		# bundle.data['date_joined'] = bundle.data['date_joined'].strftime('%s')
 		return bundle
 
 class CommentResource(ModelResource):
@@ -41,7 +42,7 @@ class CommentResource(ModelResource):
 		always_return_data = True
 		# cache = SimpleCache(timeout=100)
 		authorization = Authorization() # permission to POST
-		fields = ['text', 'upvotes', 'downvotes', 'resource_uri', 'user', 'created', 'last_edit', 'news_id', 'id', 'is_approved', 'is_deleted']
+		fields = ['text', 'upvotes', 'downvotes', 'resource_uri', 'user', 'last_edit', 'news_id', 'id', 'is_approved']
 		filtering = {
 			'user': ALL_WITH_RELATIONS,
 			'news_id': ALL_WITH_RELATIONS,
@@ -53,7 +54,7 @@ class CommentResource(ModelResource):
 
 	@silk_profile()
 	def get_object_list(self, request):
-		opinions = super(CommentResource, self).get_object_list(request).order_by('-created')
+		opinions = super(CommentResource, self).get_object_list(request).filter(is_deleted=False).order_by('-created')
 		return opinions
 
 	def obj_update(self, bundle, **kwargs):
@@ -102,7 +103,8 @@ class CommentResource(ModelResource):
 	@silk_profile()
 	def dehydrate(self, bundle):
 		del bundle.data['resource_uri']
-		bundle.data['created'] = long(bundle.data['created'].strftime('%s')) * 1000
+		# del bundle.data['created']
+		# bundle.data['created'] = long(bundle.data['created'].strftime('%s')) * 1000
 		bundle.data['last_edit'] = long(bundle.data['last_edit'].strftime('%s')) * 1000
 		if bundle.request.user.is_authenticated():
 			votes = Vote.objects.filter(user=bundle.request.user).filter(comment=bundle.obj)
