@@ -106,6 +106,8 @@ class CommentResource(ModelResource):
 
 	def obj_delete(self, bundle, **kwargs):
 		c = self.obj_get(bundle, **kwargs)
+		if bundle.request.user != c.user:
+			raise ImmediateHttpResponse(response=http.HttpUnauthorized('A user can only delete his own opinion'))
 		Comment.objects.filter(uuid=c.uuid).update(is_deleted=True)
 
 	@silk_profile()
