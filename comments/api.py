@@ -102,8 +102,8 @@ class CommentResource(ModelResource):
 	@silk_profile()
 	def dehydrate(self, bundle):
 		del bundle.data['resource_uri']
-		bundle.data['created'] = bundle.data['created'].strftime('%s')
-		bundle.data['last_edit'] = bundle.data['last_edit'].strftime('%s')
+		bundle.data['created'] = long(bundle.data['created'].strftime('%s')) * 1000
+		bundle.data['last_edit'] = long(bundle.data['last_edit'].strftime('%s')) * 1000
 		if bundle.request.user.is_authenticated():
 			votes = Vote.objects.filter(user=bundle.request.user).filter(comment=bundle.obj)
 			if len(votes) > 0:
