@@ -139,7 +139,7 @@ ROOT_URLCONF = 'nis_comments.urls'
 
 WSGI_APPLICATION = 'nis_comments.wsgi.application'
 
-
+print 'DB Name = ', os.environ['RDS_DB_NAME']
 # Database
 # https://docs.djangoproject.com/en/1.8/ref/settings/#databases
 
