@@ -21,7 +21,6 @@ class UserResource(ModelResource):
 		queryset = User.objects.all()
 		resource_name = 'users'
 		fields = ['id', 'name', 'image_url']
-		# excludes = ['password', 'is_active', 'is_staff', 'is_superuser', 'source']
 		allowed_methods = ['get']
 		filtering = {
 			'username': ALL_WITH_RELATIONS,
@@ -32,7 +31,6 @@ class UserResource(ModelResource):
 
 	def dehydrate(self, bundle):
 		del bundle.data['resource_uri']
-		# bundle.data['date_joined'] = bundle.data['date_joined'].strftime('%s')
 		return bundle
 
 class CommentResource(ModelResource):
@@ -44,7 +42,7 @@ class CommentResource(ModelResource):
 		always_return_data = True
 		# cache = SimpleCache(timeout=100)
 		authorization = Authorization() # permission to POST
-		fields = ['text', 'upvotes', 'downvotes', 'resource_uri', 'user', 'last_edit', 'news_id', 'id', 'is_approved']
+		fields = ['text', 'upvotes', 'downvotes', 'user', 'last_edit', 'news_id', 'id']
 		filtering = {
 			'user': ALL_WITH_RELATIONS,
 			'news_id': ALL_WITH_RELATIONS,
@@ -54,7 +52,6 @@ class CommentResource(ModelResource):
 		}
 		authentication = OAuth20AuthenticationOpinions() # this doesn't need authentication on GET reqeusts
 
-	@silk_profile()
 	def get_object_list(self, request):
 		opinions = super(CommentResource, self).get_object_list(request).filter(is_deleted=False).order_by('-created')
 		return opinions
@@ -91,9 +88,6 @@ class CommentResource(ModelResource):
 			c.text = text
 			c.is_deleted = False
 			Edit(cmt=c, old_text=old_text, new_text=text).save()
-			# return bundle
-			# print 'multiple opinions ...'
-			# raise ImmediateHttpResponse(response=http.HttpBadRequest("A User can post only one opinion"))
 		else:
 			c = Comment(user=user, news_id=news_id, text=text)
 		all_approved_obj = AllApproved.objects.filter(news_id=news_id)
@@ -112,11 +106,8 @@ class CommentResource(ModelResource):
 			raise ImmediateHttpResponse(response=http.HttpUnauthorized('A user can only delete his own opinion'))
 		Comment.objects.filter(uuid=c.uuid).update(is_deleted=True)
 
-	@silk_profile()
 	def dehydrate(self, bundle):
 		del bundle.data['resource_uri']
-		# del bundle.data['created']
-		# bundle.data['created'] = long(bundle.data['created'].strftime('%s')) * 1000
 		bundle.data['last_edit'] = long(bundle.data['last_edit'].strftime('%s')) * 1000
 		if bundle.request.user.is_authenticated():
 			votes = Vote.objects.filter(user=bundle.request.user).filter(comment=bundle.obj)
