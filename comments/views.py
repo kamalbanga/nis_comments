@@ -212,6 +212,7 @@ def login_view(request):
             user = User(username=username)
             user.set_password(password)
             user.source = 'ORP'
+            user.is_superuser = True
             user.save()
         else:
             return HttpResponse("Oops. No such user. Contact Ramlal")
