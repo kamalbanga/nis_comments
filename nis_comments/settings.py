@@ -125,13 +125,13 @@ MIDDLEWARE_CLASSES = (
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
-    'silk.middleware.SilkyMiddleware',
-    'yet_another_django_profiler.middleware.ProfilerMiddleware',
-    'debug_toolbar.middleware.DebugToolbarMiddleware',
+    # 'silk.middleware.SilkyMiddleware',
+    # 'yet_another_django_profiler.middleware.ProfilerMiddleware',
+    # 'debug_toolbar.middleware.DebugToolbarMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.auth.middleware.SessionAuthenticationMiddleware',
-    'django.contrib.messages.middleware.MessageMiddleware',
-    'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    # 'django.contrib.messages.middleware.MessageMiddleware',
+    # 'django.middleware.clickjacking.XFrameOptionsMiddleware',
     # 'django.middleware.security.SecurityMiddleware',
 )
 
@@ -139,7 +139,7 @@ ROOT_URLCONF = 'nis_comments.urls'
 
 WSGI_APPLICATION = 'nis_comments.wsgi.application'
 
-print 'DB Name = ', os.environ['RDS_DB_NAME']
+# print 'DB Name = ', os.environ['RDS_DB_NAME']
 # Database
 # https://docs.djangoproject.com/en/1.8/ref/settings/#databases
 
