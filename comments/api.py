@@ -13,6 +13,8 @@ from django.core.cache import cache
 from tastypie.cache import SimpleCache
 from silk.profiling.dynamic import *
 from datetime import datetime
+from django.db import transaction
+from django.db.models import F
 
 class UserResource(ModelResource):
 	class Meta:
@@ -146,8 +148,8 @@ class FollowResource(ModelResource):
 		if follower == followed:
 			raise ImmediateHttpResponse(response=http.HttpForbidden("A user can't follow himself"))
 		f = Follow(follower=follower, followed=followed)
-		follower.follow_count = follower.follow_count + 1
-		followed.followed_count = followed.followed_count + 1
+		follower.follow_count = F('follow_count') + 1
+		followed.followed_count = F('followed_count') + 1
 		follower.save()
 		followed.save()
 		f.save()
@@ -208,26 +210,26 @@ class VoteResource(ModelResource):
 			elif current_vote_type == 0:
 				existing_vote.delete()
 				if existing_vote_type == 1:
-					c.upvotes = c.upvotes - 1
+					c.upvotes = F('upvotes') - 1
 				else:
-					c.downvotes = c.downvotes - 1
+					c.downvotes = F('downvotes') - 1
 				c.save()
 			else:
 				if existing_vote_type == 1:
-					c.upvotes = c.upvotes - 1
-					c.downvotes = c.downvotes + 1
+					c.upvotes = F('upvotes') - 1
+					c.downvotes = F('downvotes') + 1
 					existing_vote.vote_type = -1
 				else:
-					c.upvotes = c.upvotes + 1
-					c.downvotes = c.downvotes - 1
+					c.upvotes = F('upvotes') + 1
+					c.downvotes = F('downvotes') - 1
 					existing_vote.vote_type = +1
 				existing_vote.save()
 				c.save()
 			return bundle
 		if current_vote_type == 1:
-			c.upvotes = c.upvotes + 1
+			c.upvotes = F('upvotes') + 1
 		else:
-			c.downvotes = c.downvotes + 1
+			c.downvotes = F('downvotes') + 1
 		c.save()
 		Vote(comment = c, user = bundle.request.user, vote_type = current_vote_type).save()
 		return bundle
