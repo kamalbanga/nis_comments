@@ -200,7 +200,7 @@ class VoteResource(ModelResource):
 			raise NotFound("Field 'vote_type' not found")
 		author = c.user
 		if bundle.request.user == author:
-			raise ImmediateHttpResponse(response=http.HttpUnauthorized("One can't upvote his own opinion"))
+			raise ImmediateHttpResponse(response=http.HttpBadRequest("One can't upvote his own opinion"))
 		has_voted = len(Vote.objects.filter(user=bundle.request.user).filter(comment=c)) > 0
 		if has_voted:
 			existing_vote = Vote.objects.filter(user=bundle.request.user).get(comment=c)
