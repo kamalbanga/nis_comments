@@ -56,9 +56,9 @@ INSTALLED_APPS = (
     'provider',
     'provider.oauth2',
     'comments',
-    'silk',
-    'yet_another_django_profiler',
-    'debug_toolbar',
+    # 'silk',
+    # 'yet_another_django_profiler',
+    # 'debug_toolbar',
 )
 
 AUTH_USER_MODEL = 'comments.EmailUser'
