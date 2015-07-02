@@ -27,7 +27,7 @@ def home(request):
     return render(request, 'home.html', {'news': News.objects.all()})
 
 def loaderio(request):
-    content = 'loaderio-5b4540e24d0a6151b10967817c468dc1'
+    content = 'loaderio-2fedc1b3c19f15472ec5c31a4c8057fb'
     return HttpResponse(content, content_type='text/plain')
 
 def loaderio2(request):
