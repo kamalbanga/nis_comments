@@ -53,14 +53,14 @@ class CommentResource(ModelResource):
 		authentication = OAuth20AuthenticationOpinions() # this doesn't need authentication on GET reqeusts
 
 	def get_object_list(self, request):
-		# cached_opinions = cache.get('opinions')
-		# if cached_opinions is not None:
-		# 	# print 'got in cache'
-		# 	return cached_opinions
-		# else:	
-		opinions = super(CommentResource, self).get_object_list(request).filter(is_deleted=False).order_by('-created')
-			# cached_opinions = cache.set('opinions', opinions, 100)
-			# print 'didn\'t get in cache'
+		cached_opinions = cache.get('opinions')
+		if cached_opinions is not None:
+			# print 'got in cache'
+			return cached_opinions
+		else:	
+			opinions = super(CommentResource, self).get_object_list(request).filter(is_deleted=False).order_by('-created')
+			cached_opinions = cache.set('opinions', opinions, 100)
+			print 'didn\'t get in cache'
 		return opinions
 
 	def obj_update(self, bundle, **kwargs):
