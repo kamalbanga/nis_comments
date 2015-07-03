@@ -34,7 +34,7 @@ class UserResource(ModelResource):
 		return bundle
 
 class CommentResource(ModelResource):
-	user = fields.ForeignKey(UserResource, 'user', full=True)
+	user = fields.ForeignKey(UserResource, 'user')
 
 	class Meta:
 		queryset = Comment.objects.filter(is_deleted=False)
