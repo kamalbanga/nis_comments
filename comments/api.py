@@ -2,18 +2,18 @@ from tastypie.resources import ModelResource, ALL, ALL_WITH_RELATIONS
 from tastypie.constants import ALL
 from tastypie import fields, http
 from models import *
-from tastypie.authentication import Authentication, BasicAuthentication
-from tastypie.authorization import Authorization, DjangoAuthorization
+# from tastypie.authentication import Authentication, BasicAuthentication
+from tastypie.authorization import Authorization #, DjangoAuthorization
 from comments.models import EmailUser as User
 from authenticate import OAuth20Authentication, OAuth20AuthenticationOpinions
 from django.db import models, IntegrityError
 from tastypie.exceptions import *
 from provider.oauth2.models import Client
 from django.core.cache import cache
-from tastypie.cache import SimpleCache
-from silk.profiling.dynamic import *
+# from tastypie.cache import SimpleCache
+# from silk.profiling.dynamic import *
 from datetime import datetime
-from django.db import transaction
+# from django.db import transaction
 from django.db.models import F
 
 class UserResource(ModelResource):

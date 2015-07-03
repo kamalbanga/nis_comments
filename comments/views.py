@@ -1,5 +1,5 @@
-from django import forms
-from .forms import EmailUserCreationForm as UserCreationForm
+# from django import forms
+# from .forms import EmailUserCreationForm as UserCreationForm
 from django.shortcuts import render
 from django.http import HttpResponseRedirect, HttpResponse
 from django.template import RequestContext, loader, Context
@@ -18,7 +18,7 @@ import json # for sending user data as json
 import requests # for GETing https://graph.facebook.com/me?access_token=...
 import uuid
 from django.core.cache import cache
-from silk.profiling.dynamic import *
+# from silk.profiling.dynamic import *
 
 def hi(request):
     return HttpResponse('hi', content_type='text/plain')
@@ -38,7 +38,6 @@ def loaderio3(request):
     content = 'loaderio-5fa909c94db66f8c75cdcf5c57fc3672'
     return HttpResponse(content, content_type='text/plain')
 
-@silk_profile()
 def get_opinions(request):
     cached_opinions = cache.get('opinions')
     if cached_opinions is not None:
@@ -48,7 +47,6 @@ def get_opinions(request):
     cache.set('opinions', opinions, 100)
     return HttpResponse(opinions, content_type='text/plain')
 
-@silk_profile()
 def get_opinions_without_cache(request):
     return HttpResponse(Comment.objects.all(), content_type='text/plain')
 
